@@ -721,6 +721,59 @@
             }
         }
 
+        function blockUser(userId, userName) {
+            if (!currentUser || userId === currentUser.id) return;
+            
+            console.log('Blocking user:', userId, userName);
+            
+            try {
+                // Add to my blocked list
+                blockedUsersRef.child(currentUser.id).child(userId).set(true);
+                
+                // Add me to their blocked list (mutual blocking)
+                blockedUsersRef.child(userId).child(currentUser.id).set(true);
+                
+                // Add to local blockedUsers set
+                blockedUsers.add(userId);
+                
+                // Close private chat
+                closePrivateChat();
+                
+                alert(`חסמת את ${userName}`);
+                
+                console.log('User blocked successfully');
+                
+            } catch (error) {
+                console.error('Error blocking user:', error);
+                alert('שגיאה בחסימת המשתמש');
+            }
+        }
+
+        function unblockUser(userId, userName) {
+            if (!currentUser) return;
+            
+            console.log('Unblocking user:', userId, userName);
+            
+            try {
+                // Remove from my blocked list
+                blockedUsersRef.child(currentUser.id).child(userId).remove();
+                
+                // Remove me from their blocked list
+                blockedUsersRef.child(userId).child(currentUser.id).remove();
+                
+                // Remove from local blockedUsers set
+                blockedUsers.delete(userId);
+                
+                alert(`ביטלת את החסימה של ${userName}`);
+                
+                console.log('User unblocked successfully');
+                
+            } catch (error) {
+                console.error('Error unblocking user:', error);
+                alert('שגיאה בביטול החסימה');
+            }
+        }
+
         function setupListeners() {
 
         function loadBlockedUsers() {
