@@ -736,8 +736,8 @@
                 // Add to local blockedUsers set
                 blockedUsers.add(userId);
                 
-                // Close private chat
-                closePrivateChat();
+                // Update the private chat to show unblock button
+                updatePrivateChatButtons(userId, userName, true);
                 
                 alert(`חסמת את ${userName}`);
                 
