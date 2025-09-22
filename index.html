@@ -915,13 +915,13 @@
             // Check if user is blocked to show appropriate button
             const isBlocked = blockedUsers.has(userId);
             const blockButtonHTML = isBlocked ? 
-                `<button onclick="unblockUser('${userId}', '${userName}')" style="background: #28a745; color: white; border: none; padding: 5px 10px; border-radius: 3px; font-size: 12px; margin-right: 10px;">בטל חסימה</button>` :
-                `<button onclick="blockUser('${userId}', '${userName}')" style="background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 3px; font-size: 12px; margin-right: 10px;">חסום</button>`;
+                `<button onclick="unblockUser('${userId}', '${userName}')" style="background: #28a745; color: white; border: none; padding: 8px 15px; border-radius: 5px; font-size: 14px; margin: 5px; cursor: pointer;">בטל חסימה</button>` :
+                `<button onclick="blockUser('${userId}', '${userName}')" style="background: #dc3545; color: white; border: none; padding: 8px 15px; border-radius: 5px; font-size: 14px; margin: 5px; cursor: pointer;">חסום משתמש</button>`;
             
             // Clear previous messages and add block button
             document.getElementById('privateMessages').innerHTML = `
                 <div class="join-message">💬 התחלת צ'אט פרטי עם ${userName}</div>
-                <div style="text-align: center; padding: 10px; border-bottom: 1px solid #ddd;">
+                <div style="text-align: center; padding: 15px; border-bottom: 1px solid #ddd; background: #f8f9fa;">
                     ${blockButtonHTML}
                 </div>
             `;
