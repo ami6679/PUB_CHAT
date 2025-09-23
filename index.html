@@ -199,6 +199,23 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         
+        .user-card.blocked {
+            background: #ffebee;
+            border: 1px solid #f44336;
+            opacity: 0.7;
+        }
+        
+        .user-card.blocked:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 3px 6px rgba(244, 67, 54, 0.2);
+        }
+        
+        .blocked-indicator {
+            color: #f44336;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
         .user-card-photo {
             width: 40px;
             height: 40px;
@@ -494,7 +511,7 @@
 
     <!-- Main App -->
     <div class="header">
-        <div class="pub-name">🍺 פאב צ'אט <span style="font-size: 12px; opacity: 0.7;">v1.2.1</span></div>
+        <div class="pub-name">🍺 פאב צ'אט <span style="font-size: 12px; opacity: 0.7;">v1.2.3</span></div>
         <div class="online-count" id="onlineCount">מתחבר...</div>
     </div>
     
@@ -964,11 +981,10 @@
             usersContainer.innerHTML = '';
             
             Object.values(users).forEach(user => {
-                // Skip blocked users
-                if (blockedUsers.has(user.id)) return;
-                
+                // Show all users, but mark blocked ones differently
+                const isBlocked = blockedUsers.has(user.id);
                 const userCard = document.createElement('div');
-                userCard.className = `user-card ${user.id === currentUser?.id ? 'current-user' : ''}`;
+                userCard.className = `user-card ${user.id === currentUser?.id ? 'current-user' : ''} ${isBlocked ? 'blocked' : ''}`;
                 
                 // Photo or placeholder
                 let photoHTML = '';
@@ -980,12 +996,19 @@
                 }
                 
                 // Status display
-                const statusHTML = user.status ? `<div class="user-card-status">${user.status}</div>` : '';
+                let statusHTML = '';
+                if (user.status) {
+                    statusHTML = `<div class="user-card-status">${user.status}</div>`;
+                }
+                
+                // Blocked indicator
+                const blockedHTML = isBlocked ? `<div class="blocked-indicator">🚫 חסום</div>` : '';
                 
                 userCard.innerHTML = `
                     ${photoHTML}
                     <div class="user-card-name">${user.name}</div>
                     ${statusHTML}
+                    ${blockedHTML}
                 `;
                 
                 if (user.id !== currentUser?.id) {
@@ -997,7 +1020,7 @@
         }
 
         function openPrivateChat(userName, userId) {
-            if (userId === currentUser?.id || blockedUsers.has(userId)) return;
+            if (userId === currentUser?.id) return;
             
             currentPrivateChat = { name: userName, id: userId };
             
@@ -1011,8 +1034,12 @@
                 `<button onclick="blockUser('${userId}', '${userName}')" style="background: #dc3545; color: white; border: none; padding: 8px 15px; border-radius: 5px; font-size: 14px; margin: 5px; cursor: pointer;">חסום משתמש</button>`;
             
             // Clear previous messages and add block button
+            const welcomeMessage = isBlocked ? 
+                `<div class="join-message">🚫 צ'אט פרטי עם ${userName} (חסום)</div>` :
+                `<div class="join-message">💬 התחלת צ'אט פרטי עם ${userName}</div>`;
+            
             document.getElementById('privateMessages').innerHTML = `
-                <div class="join-message">💬 התחלת צ'אט פרטי עם ${userName}</div>
+                ${welcomeMessage}
                 <div style="text-align: center; padding: 15px; border-bottom: 1px solid #ddd; background: #f8f9fa;">
                     ${blockButtonHTML}
                 </div>
