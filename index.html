@@ -1,4 +1,19 @@
-<!DOCTYPE html>
+.user-card-name {
+            font-weight: bold;
+            margin-bottom: 4px;
+            color: #075e54;
+        }
+        
+        .user-card-name.owner {
+            color: #ffd700;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+        
+        .user-card-status {
+            font-size: 12px;
+            color: #666;
+            font-style: italic;
+        }<!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -226,16 +241,9 @@
             border: 2px solid #075e54;
         }
         
-        .user-card-name {
-            font-weight: bold;
-            margin-bottom: 4px;
-            color: #075e54;
-        }
-        
-        .user-card-status {
-            font-size: 12px;
-            color: #666;
-            font-style: italic;
+        .user-card-photo.owner {
+            border: 3px solid #ffd700;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
         }
         
         .no-photo-placeholder {
@@ -250,6 +258,14 @@
             margin: 0 auto 8px;
             font-size: 18px;
             font-weight: bold;
+            border: 2px solid #075e54;
+        }
+        
+        .no-photo-placeholder.owner {
+            background: #ffd700;
+            color: #000;
+            border: 3px solid #ffd700;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
         }
         
         .user-badge {
@@ -497,6 +513,8 @@
             
             <input type="text" id="usernameInput" placeholder="השם שלך..." maxlength="20">
             
+            <input type="password" id="ownerPassword" placeholder="סיסמת OWNER (אופציונלי)" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; font-size: 16px; margin-bottom: 10px; text-align: center;">
+            
             <select id="statusSelect" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; font-size: 16px; margin-bottom: 20px; text-align: center;">
                 <option value="">בחר סטטוס (אופציונלי)</option>
                 <option value="פנוי">פנוי</option>
@@ -511,7 +529,7 @@
 
     <!-- Main App -->
     <div class="header">
-        <div class="pub-name">🍺 פאב צ'אט <span style="font-size: 12px; opacity: 0.7;">v1.2.4</span></div>
+        <div class="pub-name">🍺 פאב צ'אט <span style="font-size: 12px; opacity: 0.7;">v1.3.0</span></div>
         <div class="online-count" id="onlineCount">מתחבר...</div>
     </div>
     
@@ -571,6 +589,10 @@
         let blockedUsersRef = null;
         let processedMessages = new Set(); // Track processed private messages
         let blockedUsers = new Set(); // Track blocked users
+        
+        // Owner configuration
+        const OWNER_PASSWORD = "pub123"; // Change this to your desired password
+        let isOwner = false;
 
         function initFirebase() {
             try {
@@ -987,10 +1009,12 @@
                 // Photo or placeholder
                 let photoHTML = '';
                 if (user.photoURL) {
-                    photoHTML = `<img src="${user.photoURL}" class="user-card-photo" alt="פרופיל">`;
+                    const ownerClass = user.isOwner ? 'owner' : '';
+                    photoHTML = `<img src="${user.photoURL}" class="user-card-photo ${ownerClass}" alt="פרופיל">`;
                 } else {
                     const initial = user.name.charAt(0).toUpperCase();
-                    photoHTML = `<div class="no-photo-placeholder">${initial}</div>`;
+                    const ownerClass = user.isOwner ? 'owner' : '';
+                    photoHTML = `<div class="no-photo-placeholder ${ownerClass}">${initial}</div>`;
                 }
                 
                 // Status display
@@ -999,12 +1023,16 @@
                     statusHTML = `<div class="user-card-status">${user.status}</div>`;
                 }
                 
+                // Owner indicator and name styling
+                const nameClass = user.isOwner ? 'owner' : '';
+                const ownerTag = user.isOwner ? ' 👑' : '';
+                
                 // Blocked indicator
                 const blockedHTML = isBlocked ? `<div class="blocked-indicator">🚫 חסום</div>` : '';
                 
                 userCard.innerHTML = `
                     ${photoHTML}
-                    <div class="user-card-name">${user.name}</div>
+                    <div class="user-card-name ${nameClass}">${user.name}${ownerTag}</div>
                     ${statusHTML}
                     ${blockedHTML}
                 `;
