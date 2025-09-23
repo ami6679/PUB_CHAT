@@ -12,319 +12,11 @@
         }
         
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background: #f0f0f0;
+            height: 100vh;
             display: flex;
             flex-direction: column;
-        }
-        
-        .header {
-            background: rgba(0, 0, 0, 0.2);
-            backdrop-filter: blur(10px);
-            color: white;
-            padding: 1rem;
-            text-align: center;
-            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
-        }
-        
-        .pub-name {
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
-        }
-        
-        .online-count {
-            font-size: 14px;
-            opacity: 0.8;
-        }
-        
-        .username-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.7);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-        }
-        
-        .username-modal.hidden {
-            display: none;
-        }
-        
-        .modal-content {
-            background: white;
-            padding: 2rem;
-            border-radius: 20px;
-            text-align: center;
-            max-width: 400px;
-            width: 90%;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-        }
-        
-        .modal-content h2 {
-            margin-bottom: 1rem;
-            color: #333;
-        }
-        
-        .photo-upload {
-            margin-bottom: 20px;
-            text-align: center;
-        }
-        
-        .photo-preview {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid #667eea;
-            margin-bottom: 10px;
-            display: none;
-        }
-        
-        .upload-btn {
-            background: #f8f9fa;
-            border: 2px dashed #667eea;
-            border-radius: 10px;
-            padding: 15px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            color: #667eea;
-            font-size: 14px;
-        }
-        
-        .upload-btn:hover {
-            background: #667eea;
-            color: white;
-        }
-        
-        .modal-content input, .modal-content select {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 16px;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-        
-        .modal-content button {
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            color: white;
-            border: none;
-            padding: 12px 30px;
-            border-radius: 25px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-        
-        .modal-content button:hover {
-            transform: translateY(-2px);
-        }
-        
-        .online-users {
-            background: rgba(255, 255, 255, 0.1);
-            margin: 1rem;
-            padding: 1rem;
-            border-radius: 15px;
-            backdrop-filter: blur(10px);
-        }
-        
-        .users-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            gap: 15px;
-            margin-top: 1rem;
-        }
-        
-        .user-card {
-            background: rgba(255, 255, 255, 0.2);
-            padding: 15px;
-            border-radius: 12px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: 2px solid transparent;
-        }
-        
-        .user-card:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: translateY(-2px);
-            border-color: rgba(255, 255, 255, 0.5);
-        }
-        
-        .user-card-photo {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin: 0 auto 10px;
-            border: 3px solid rgba(255, 255, 255, 0.5);
-        }
-        
-        .user-card-photo.owner {
-            border: 3px solid gold;
-            box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
-        }
-        
-        .no-photo-placeholder {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 10px;
-            font-size: 24px;
-            font-weight: bold;
-            color: white;
-            border: 3px solid rgba(255, 255, 255, 0.5);
-        }
-        
-        .no-photo-placeholder.owner {
-            border: 3px solid gold;
-            box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
-            background: linear-gradient(45deg, gold, #ffd700);
-        }
-        
-        .user-card-name {
-            font-weight: bold;
-            color: white;
-            font-size: 14px;
-            margin-bottom: 5px;
-        }
-        
-        .user-card-name.owner {
-            color: gold;
-            text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
-        }
-        
-        .user-card-status {
-            font-size: 12px;
-            color: rgba(255, 255, 255, 0.8);
-        }
-        
-        .private-chat-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.7);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1001;
-        }
-        
-        .private-chat-modal.hidden {
-            display: none;
-        }
-        
-        .private-chat-content {
-            background: white;
-            width: 90%;
-            height: 80%;
-            border-radius: 20px;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-        }
-        
-        .private-chat-header {
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            color: white;
-            padding: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        
-        .private-chat-messages {
-            flex: 1;
-            padding: 1rem;
-            overflow-y: auto;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-        }
-        
-        .private-chat-input {
-            background: white;
-            padding: 1rem;
-            display: flex;
-            gap: 10px;
-            border-top: 1px solid #ddd;
-        }
-        
-        .private-message {
-            background: rgba(255, 255, 255, 0.9);
-            padding: 10px 15px;
-            border-radius: 18px;
-            margin-bottom: 10px;
-            max-width: 70%;
-            word-wrap: break-word;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        
-        .private-message.own {
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            color: white;
-            align-self: flex-end;
-            margin-left: auto;
-        }
-        
-        .message-time {
-            font-size: 11px;
-            color: rgba(0,0,0,0.5);
-            margin-top: 5px;
-        }
-        
-        .private-message.own .message-time {
-            color: rgba(255,255,255,0.7);
-        }
-        
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: #667eea;
-            color: white;
-            padding: 15px 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-            z-index: 10000;
-            max-width: 300px;
-            cursor: pointer;
-            transform: translateX(400px);
-            transition: transform 0.3s ease;
-        }
-        
-        .notification.show {
-            transform: translateX(0);
-        }
-        
-        .notification-title {
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-        
-        .notification-message {
-            font-size: 14px;
-            opacity: 0.9;
-        }
-        
-        input[type="file"] {
-            display: none;
-        }
-        
-        .chat-container {
-            flex: 1;
-            overflow: hidden;
         }
         
         .loading {
@@ -346,36 +38,466 @@
             display: none;
         }
         
-        @media (max-width: 768px) {
-            .users-grid {
-                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-                gap: 10px;
-            }
-            
-            .user-card {
-                padding: 10px;
-            }
-            
-            .user-card-photo, .no-photo-placeholder {
-                width: 50px;
-                height: 50px;
-            }
-            
-            .private-chat-content {
-                width: 95%;
-                height: 90%;
-            }
+        .header {
+            background: #075e54;
+            color: white;
+            padding: 15px 20px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .pub-name {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .online-count {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #e5ddd5;
+            overflow: hidden;
+        }
+        
+        .messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .message {
+            max-width: 70%;
+            padding: 8px 12px;
+            border-radius: 18px;
+            word-wrap: break-word;
+            animation: fadeIn 0.3s ease-in;
+        }
+        
+        .message.received {
+            background: white;
+            align-self: flex-start;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        
+        .message.sent {
+            background: #dcf8c6;
+            align-self: flex-end;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        
+        .message-header {
+            font-size: 12px;
+            font-weight: bold;
+            color: #075e54;
+            margin-bottom: 3px;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+        
+        .message-header:hover {
+            color: #064940;
+        }
+        
+        .message-time {
+            font-size: 11px;
+            color: #999;
+            float: left;
+            margin-top: 5px;
+            clear: both;
+        }
+        
+        .message.sent .message-time {
+            float: right;
+        }
+        
+        .input-area {
+            background: white;
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-top: 1px solid #ddd;
+        }
+        
+        .message-input {
+            flex: 1;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            padding: 10px 15px;
+            font-size: 16px;
+            outline: none;
+        }
+        
+        .send-button {
+            background: #075e54;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+        
+        .send-button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .users-online {
+            background: rgba(7, 94, 84, 0.1);
+            padding: 15px;
+            text-align: center;
+            font-size: 14px;
+            color: #075e54;
+            border-bottom: 1px solid #ddd;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .user-card {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 10px;
+            margin: 5px;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            min-width: 120px;
+            text-align: center;
+        }
+        
+        .user-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        
+        .user-card.current-user {
+            cursor: default;
+            background: #f8f8f8;
+        }
+        
+        .user-card.current-user:hover {
+            transform: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .user-card.blocked {
+            background: #ffebee;
+            border: 1px solid #f44336;
+            opacity: 0.7;
+        }
+        
+        .user-card.blocked:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 3px 6px rgba(244, 67, 54, 0.2);
+        }
+        
+        .blocked-indicator {
+            color: #f44336;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .user-card-photo {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 0 auto 8px;
+            display: block;
+            border: 2px solid #075e54;
+        }
+        
+        .user-card-photo.owner {
+            border: 3px solid #ffd700;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+        
+        .no-photo-placeholder {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #075e54;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 8px;
+            font-size: 18px;
+            font-weight: bold;
+            border: 2px solid #075e54;
+        }
+        
+        .no-photo-placeholder.owner {
+            background: #ffd700;
+            color: #000;
+            border: 3px solid #ffd700;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+        
+        .user-badge {
+            background: #075e54;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+        
+        .user-badge:hover {
+            background: #064940;
+        }
+        
+        .user-badge.current-user {
+            cursor: default;
+            text-decoration: none;
+            background: #666;
+        }
+        
+        .join-message {
+            text-align: center;
+            color: #888;
+            font-size: 14px;
+            font-style: italic;
+            padding: 10px;
+            animation: fadeIn 0.3s ease-in;
+        }
+        
+        .private-chat {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            right: 20px;
+            width: 300px;
+            height: 400px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px 8px 0 0;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+            flex-direction: column;
+        }
+        
+        .private-chat.show {
+            display: flex;
+        }
+        
+        .private-header {
+            background: #075e54;
+            color: white;
+            padding: 12px 15px;
+            border-radius: 8px 8px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .close-chat {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 5px;
+        }
+        
+        .private-messages {
+            flex: 1;
+            padding: 10px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            background: #e5ddd5;
+        }
+        
+        .private-input-area {
+            background: white;
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-top: 1px solid #ddd;
+        }
+        
+        .private-input {
+            flex: 1;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            padding: 8px 12px;
+            font-size: 14px;
+            outline: none;
+        }
+        
+        .private-send {
+            background: #075e54;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+        
+        .username-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+        
+        .username-modal.hidden {
+            display: none;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+        
+        .modal-content h2 {
+            margin-bottom: 20px;
+            color: #075e54;
+        }
+        
+        .modal-content input, .modal-content select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .photo-upload {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .photo-preview {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #075e54;
+            margin-bottom: 10px;
+            display: none;
+        }
+        
+        .upload-btn {
+            background: #f0f0f0;
+            border: 2px dashed #075e54;
+            padding: 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            color: #075e54;
+            font-size: 14px;
+        }
+        
+        .upload-btn:hover {
+            background: #e8f5f3;
+        }
+        
+        #photoInput {
+            display: none;
+        }
+        
+        .user-photo {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-left: 5px;
+            vertical-align: middle;
+        }
+        
+        .message-photo {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-left: 5px;
+            vertical-align: middle;
+        }
+        
+        .modal-content button {
+            background: #075e54;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .user-card-name {
+            font-weight: bold;
+            margin-bottom: 4px;
+            color: #075e54;
+        }
+        
+        .user-card-name.owner {
+            color: #ffd700;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+        
+        .user-card-status {
+            font-size: 12px;
+            color: #666;
+            font-style: italic;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes slideDown {
+            from { opacity: 0; transform: translate(-50%, -20px); }
+            to { opacity: 1; transform: translate(-50%, 0); }
         }
     </style>
 </head>
 <body>
-    <div class="loading" id="loading">מתחבר לצ'אט...</div>
-    
-    <div class="header">
-        <div class="pub-name">🍺 פאב צ'אט <span style="font-size: 12px; opacity: 0.7;">v1.3.1</span></div>
-        <div class="online-count" id="onlineCount">מתחבר...</div>
+    <!-- Loading Screen -->
+    <div class="loading" id="loading">
+        <div>🔄 מתחבר לשרת...</div>
     </div>
-    
+
     <!-- Username Modal -->
     <div class="username-modal" id="usernameModal">
         <div class="modal-content">
@@ -406,31 +528,39 @@
             <button onclick="joinChat()">הצטרף לצ'אט</button>
         </div>
     </div>
+
+    <!-- Main App -->
+    <div class="header">
+        <div class="pub-name">🍺 פאב צ'אט <span style="font-size: 12px; opacity: 0.7;">v1.3.1</span></div>
+        <div class="online-count" id="onlineCount">מתחבר...</div>
+    </div>
+    
+    <div class="users-online" id="usersOnline">
+        <div>מטען משתמשים...</div>
+    </div>
     
     <div class="chat-container">
-        <div class="online-users">
-            <h3 style="color: white; text-align: center; margin-bottom: 10px;">🟢 משתתפים פעילים</h3>
-            <div class="users-grid" id="usersGrid"></div>
+        <div class="messages" id="messages">
+            <div class="join-message">🎉 ברוכים הבאים לפאב צ'אט!</div>
+        </div>
+        
+        <div class="input-area">
+            <input type="text" class="message-input" placeholder="כתוב הודעה..." id="messageInput" disabled>
+            <button class="send-button" onclick="sendMessage()" id="sendButton" disabled>➤</button>
         </div>
     </div>
     
-    <!-- Private Chat Modal -->
-    <div class="private-chat-modal hidden" id="privateChatModal">
-        <div class="private-chat-content">
-            <div class="private-chat-header">
-                <button style="background:none;border:none;color:white;font-size:20px;cursor:pointer;" onclick="closePrivateChat()">✕</button>
-                <div>
-                    <div style="font-weight: bold;">צ'אט פרטי עם <span id="privateChatUser"></span></div>
-                </div>
-                <div style="width: 20px;"></div>
-            </div>
-            
-            <div class="private-chat-messages" id="privateChatMessages"></div>
-            
-            <div class="private-chat-input">
-                <input type="text" id="privateMessageInput" placeholder="כתוב הודעה פרטית..." style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 20px; outline: none;">
-                <button onclick="sendPrivateMessage()" style="background: linear-gradient(45deg, #667eea, #764ba2); color: white; border: none; padding: 10px 20px; border-radius: 20px; cursor: pointer;">שלח</button>
-            </div>
+    <!-- Private Chat Window -->
+    <div class="private-chat" id="privateChat">
+        <div class="private-header">
+            <span id="privateChatName">צ'אט פרטי</span>
+            <button class="close-chat" onclick="closePrivateChat()">×</button>
+        </div>
+        <div class="private-messages" id="privateMessages">
+        </div>
+        <div class="private-input-area">
+            <input type="text" class="private-input" placeholder="הודעה פרטית..." id="privateInput" disabled>
+            <button class="private-send" onclick="sendPrivateMessage()" id="privateSendButton" disabled>➤</button>
         </div>
     </div>
 
@@ -438,7 +568,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-storage-compat.js"></script>
-
+    
     <script>
         // Firebase Configuration
         const firebaseConfig = {
@@ -452,42 +582,106 @@
         };
 
         // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
-        const storage = firebase.storage();
-        
-        // Global variables
+        let app, database, storage;
         let currentUser = null;
         let currentPrivateChat = null;
         let messagesRef = null;
         let usersRef = null;
         let privateMessagesRef = null;
+        let blockedUsersRef = null;
         let processedMessages = new Set(); // Track processed private messages
+        let blockedUsers = new Set(); // Track blocked users
         
-        // Owner password
+        // Owner configuration
         const OWNER_PASSWORD = "pub123";
-        
-        // Initialize app
-        document.getElementById('loading').classList.add('hidden');
-        
-        // Preview uploaded photo
-        function previewPhoto(input) {
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const preview = document.getElementById('photoPreview');
-                    preview.src = e.target.result;
-                    preview.style.display = 'block';
-                }
-                reader.readAsDataURL(input.files[0]);
+
+        function initFirebase() {
+            try {
+                app = firebase.initializeApp(firebaseConfig);
+                database = firebase.database();
+                storage = firebase.storage();
+                
+                // References
+                messagesRef = database.ref('messages');
+                usersRef = database.ref('users');
+                privateMessagesRef = database.ref('privateMessages');
+                blockedUsersRef = database.ref('blockedUsers');
+                
+                // Listen to connection status
+                const connectedRef = database.ref('.info/connected');
+                connectedRef.on('value', (snapshot) => {
+                    if (snapshot.val() === true) {
+                        document.getElementById('loading').classList.add('hidden');
+                        console.log('Connected to Firebase');
+                    } else {
+                        console.log('Disconnected from Firebase');
+                    }
+                });
+                
+                return true;
+            } catch (error) {
+                console.error('Firebase initialization error:', error);
+                document.getElementById('loading').innerHTML = '<div>⚠️ שגיאת חיבור. בדוק את ההגדרות.</div>';
+                return false;
             }
         }
-        
-        // Join chat function
+
+        function previewPhoto(input) {
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                
+                // Check file size (max 5MB)
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('התמונה גדולה מדי. בחר תמונה עד 5MB');
+                    input.value = '';
+                    return;
+                }
+                
+                const reader = new FileReader();
+                const preview = document.getElementById('photoPreview');
+                
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                    
+                    // Update upload button text
+                    const uploadBtn = document.querySelector('.upload-btn');
+                    uploadBtn.innerHTML = '✅ תמונה נבחרה<br><small>לחץ כדי לשנות</small>';
+                };
+                
+                reader.readAsDataURL(file);
+            }
+        }
+
+        async function uploadPhoto(file) {
+            if (!file) return null;
+            
+            try {
+                console.log('Starting photo upload...');
+                
+                // Create unique filename
+                const filename = `profile_${Date.now()}_${Math.random().toString(36).substring(7)}.jpg`;
+                const storageRef = storage.ref(`profile-photos/${filename}`);
+                
+                console.log('Uploading to:', filename);
+                
+                // Upload file
+                const uploadTask = await storageRef.put(file);
+                console.log('Upload completed');
+                
+                const downloadURL = await uploadTask.ref.getDownloadURL();
+                console.log('Download URL:', downloadURL);
+                
+                return downloadURL;
+            } catch (error) {
+                console.error('Error uploading photo:', error);
+                alert('שגיאה בהעלאת התמונה: ' + error.message);
+                return null;
+            }
+        }
+
         async function joinChat() {
             try {
-                document.getElementById('loading').classList.remove('hidden');
-                
                 const usernameInput = document.getElementById('usernameInput');
                 const photoInput = document.getElementById('photoInput');
                 const statusSelect = document.getElementById('statusSelect');
@@ -498,15 +692,17 @@
                 const status = statusSelect.value;
                 let isOwner = false;
                 
+                console.log('Join chat started. Password:', ownerPassword ? '***' : 'none', 'Username:', username, 'Status:', status);
+                
                 // Check OWNER password logic
                 if (ownerPassword) {
                     if (ownerPassword === OWNER_PASSWORD) {
                         // Correct password - auto login as OWNER
                         username = "OWNER";
                         isOwner = true;
+                        console.log('Owner login successful');
                     } else {
                         // Wrong password - show error and stop
-                        document.getElementById('loading').classList.add('hidden');
                         alert('סיסמת OWNER שגויה');
                         ownerPasswordInput.value = '';
                         return;
@@ -514,72 +710,74 @@
                 } else {
                     // No password - need username
                     if (!username) {
-                        document.getElementById('loading').classList.add('hidden');
                         alert('אנא הכנס שם משתמש');
                         return;
                     }
                     
                     if (username.length > 20) {
-                        document.getElementById('loading').classList.add('hidden');
-                        alert('השם ארוך מדי (מקסימום 20 תווים)');
+                        alert('השם צריך להיות עד 20 תווים');
                         return;
                     }
                 }
                 
-                // Create user object
+                // Show loading
+                document.getElementById('loading').classList.remove('hidden');
+                document.getElementById('loading').innerHTML = '<div>📤 מעלה פרטים...</div>';
+                
+                // Upload photo if selected (only if not owner or owner wants photo)
+                let photoURL = null;
+                if (photoInput.files && photoInput.files[0] && (!isOwner || ownerPassword)) {
+                    console.log('Uploading photo...');
+                    photoURL = await uploadPhoto(photoInput.files[0]);
+                    if (photoURL === null) {
+                        document.getElementById('loading').classList.add('hidden');
+                        return; // Upload failed
+                    }
+                    console.log('Photo uploaded successfully:', photoURL);
+                } else {
+                    console.log('No photo selected or owner without photo');
+                }
+                
                 currentUser = {
-                    id: 'user_' + Date.now() + '_' + Math.floor(Math.random() * 10000),
                     name: username,
-                    status: status,
+                    id: Date.now() + '_' + Math.floor(Math.random() * 10000),
                     joinTime: Date.now(),
+                    photoURL: photoURL,
+                    status: status,
                     isOwner: isOwner
                 };
                 
-                // Handle photo upload if exists
-                if (photoInput.files && photoInput.files[0]) {
-                    const file = photoInput.files[0];
-                    const storageRef = storage.ref().child('profile_photos/' + currentUser.id);
-                    
-                    try {
-                        const snapshot = await storageRef.put(file);
-                        const downloadURL = await snapshot.ref.getDownloadURL();
-                        currentUser.photoURL = downloadURL;
-                    } catch (error) {
-                        console.error('Error uploading photo:', error);
-                        // Continue without photo
-                    }
-                }
+                console.log('Current user created:', currentUser);
                 
-                // Setup Firebase references
-                messagesRef = database.ref('messages');
-                usersRef = database.ref('users');
-                privateMessagesRef = database.ref('privateMessages');
+                // Add user to online users
+                const userRef = usersRef.child(currentUser.id);
+                await userRef.set(currentUser);
+                console.log('User added to database');
                 
-                // Add user to Firebase
-                await usersRef.child(currentUser.id).set({
-                    name: currentUser.name,
-                    status: currentUser.status,
-                    photoURL: currentUser.photoURL || null,
-                    joinTime: currentUser.joinTime,
-                    lastSeen: firebase.database.ServerValue.TIMESTAMP,
-                    isOwner: currentUser.isOwner || false
-                });
+                // Remove user when disconnecting
+                userRef.onDisconnect().remove();
                 
-                // Remove user when disconnected
-                usersRef.child(currentUser.id).onDisconnect().remove();
+                // Hide loading and username modal
+                document.getElementById('loading').classList.add('hidden');
+                document.getElementById('usernameModal').classList.add('hidden');
                 
-                // Setup listeners
+                // Enable inputs
+                document.getElementById('messageInput').disabled = false;
+                document.getElementById('sendButton').disabled = false;
+                document.getElementById('privateInput').disabled = false;
+                document.getElementById('privateSendButton').disabled = false;
+                
+                // Listen to messages and users
                 setupListeners();
+                
+                // Load blocked users
+                loadBlockedUsers();
                 
                 // Add join message
                 const joinMessage = isOwner ? 
                     `👑 ${username} (OWNER) הצטרף/ה לצ'אט` : 
                     `${username} הצטרף/ה לצ'אט`;
                 addSystemMessage(joinMessage);
-                
-                // Hide modal and loading
-                document.getElementById('usernameModal').classList.add('hidden');
-                document.getElementById('loading').classList.add('hidden');
                 
                 console.log('Join chat completed successfully');
                 
@@ -589,256 +787,67 @@
                 alert('שגיאה בהצטרפות לצ\'אט: ' + error.message);
             }
         }
-        
-        // Setup listeners
-        function setupListeners() {
-            // Listen to users
-            usersRef.on('value', (snapshot) => {
-                const users = snapshot.val() || {};
-                updateUsersList(users);
-            });
-            
-            // Listen to private messages for notifications
-            privateMessagesRef.on('child_added', (snapshot) => {
-                const chatData = snapshot.val();
-                const chatId = snapshot.key;
-                
-                // Check if this chat involves current user
-                if (chatId && chatId.includes(currentUser.id)) {
-                    // Listen to new messages in this specific chat
-                    privateMessagesRef.child(chatId).on('child_added', (messageSnapshot) => {
-                        const message = messageSnapshot.val();
-                        
-                        // If message is for me and I didn't send it
-                        if (message && message.recipientId === currentUser.id && message.senderId !== currentUser.id) {
-                            // Check if this is a NEW message (not processed before)
-                            const messageKey = `${chatId}_${message.id}`;
-                            if (!processedMessages.has(messageKey)) {
-                                processedMessages.add(messageKey);
-                                
-                                // Show notification only if private chat is not open with this person
-                                if (!currentPrivateChat || currentPrivateChat.id !== message.senderId) {
-                                    showPrivateMessageNotification(message);
-                                }
-                            }
-                        }
-                    });
-                }
-            });
-        }
-        
-        // Update users list
-        function updateUsersList(users) {
-            const grid = document.getElementById('usersGrid');
-            const count = document.getElementById('onlineCount');
-            
-            grid.innerHTML = '';
-            count.textContent = `${Object.keys(users).length} משתתפים פעילים`;
-            
-            Object.keys(users).forEach(userId => {
-                if (userId === currentUser.id) return;
-                
-                const user = users[userId];
-                const userCard = document.createElement('div');
-                userCard.className = 'user-card';
-                userCard.onclick = () => openPrivateChat(user.name, userId);
-                
-                // Photo or placeholder
-                let photoHTML = '';
-                if (user.photoURL) {
-                    const ownerClass = user.isOwner ? 'owner' : '';
-                    photoHTML = `<img src="${user.photoURL}" class="user-card-photo ${ownerClass}" alt="פרופיל">`;
-                } else {
-                    const initial = user.name.charAt(0).toUpperCase();
-                    const ownerClass = user.isOwner ? 'owner' : '';
-                    photoHTML = `<div class="no-photo-placeholder ${ownerClass}">${initial}</div>`;
-                }
-                
-                // Status display
-                let statusHTML = '';
-                if (user.status) {
-                    statusHTML = `<div class="user-card-status">${user.status}</div>`;
-                }
-                
-                // Owner indicator and name styling
-                const nameClass = user.isOwner ? 'owner' : '';
-                const ownerTag = user.isOwner ? ' 👑' : '';
-                
-                userCard.innerHTML = `
-                    ${photoHTML}
-                    <div class="user-card-name ${nameClass}">${user.name}${ownerTag}</div>
-                    ${statusHTML}
-                `;
-                
-                grid.appendChild(userCard);
-            });
-        }
-        
-        // Add system message
-        function addSystemMessage(text) {
-            const message = {
-                id: Date.now() + '_system',
-                text: text,
-                sender: 'System',
-                senderId: 'system',
-                timestamp: Date.now(),
-                type: 'system'
-            };
-            
-            messagesRef.push(message);
-        }
-        
-        // Open private chat
-        function openPrivateChat(userName, userId) {
-            currentPrivateChat = {
-                name: userName,
-                id: userId
-            };
-            
-            document.getElementById('privateChatUser').textContent = userName;
-            document.getElementById('privateChatModal').classList.remove('hidden');
-            document.getElementById('privateChatMessages').innerHTML = '';
-            
-            // Load existing private messages
-            loadPrivateMessages(userId);
-            
-            // Focus on input
-            setTimeout(() => {
-                document.getElementById('privateMessageInput').focus();
-            }, 100);
-        }
-        
-        // Close private chat
-        function closePrivateChat() {
-            currentPrivateChat = null;
-            document.getElementById('privateChatModal').classList.add('hidden');
-        }
-        
-        // Load private messages
-        function loadPrivateMessages(userId) {
-            const chatId = [currentUser.id, userId].sort().join('_');
-            
-            privateMessagesRef.child(chatId).orderByChild('timestamp').on('child_added', (snapshot) => {
-                const message = snapshot.val();
-                displayPrivateMessage(message);
-            });
-        }
-        
-        // Display private message
-        function displayPrivateMessage(message) {
-            const messagesContainer = document.getElementById('privateChatMessages');
-            const messageDiv = document.createElement('div');
-            
-            const isOwn = message.senderId === currentUser.id;
-            messageDiv.className = `private-message ${isOwn ? 'own' : ''}`;
-            
-            const time = new Date(message.timestamp).toLocaleTimeString('he-IL', {
-                hour: '2-digit',
-                minute: '2-digit'
-            });
-            
-            messageDiv.innerHTML = `
-                <div>${escapeHtml(message.text)}</div>
-                <div class="message-time">${time}</div>
-            `;
-            
-            messagesContainer.appendChild(messageDiv);
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
-        }
-        
-        // Send private message
-        function sendPrivateMessage() {
-            const input = document.getElementById('privateMessageInput');
-            const text = input.value.trim();
-            
-            if (!text || !currentPrivateChat) return;
-            
-            if (text.length > 500) {
-                alert('ההודעה ארוכה מדי (מקסימום 500 תווים)');
+
+        function loadBlockedUsers() {
+            if (!currentUser || !blockedUsersRef) {
+                console.log('Cannot load blocked users - user or ref not ready');
                 return;
             }
             
-            const chatId = [currentUser.id, currentPrivateChat.id].sort().join('_');
-            const message = {
-                id: Date.now() + '_' + Math.floor(Math.random() * 10000),
-                text: text,
-                sender: currentUser.name,
-                senderId: currentUser.id,
-                recipient: currentPrivateChat.name,
-                recipientId: currentPrivateChat.id,
-                timestamp: Date.now()
-            };
-            
-            privateMessagesRef.child(chatId).push(message);
-            input.value = '';
+            try {
+                const userBlockedRef = blockedUsersRef.child(currentUser.id);
+                userBlockedRef.on('value', (snapshot) => {
+                    const blocked = snapshot.val() || {};
+                    blockedUsers.clear();
+                    Object.keys(blocked).forEach(blockedId => {
+                        blockedUsers.add(blockedId);
+                    });
+                    console.log('Blocked users loaded:', Array.from(blockedUsers));
+                    
+                    // Refresh users list to hide blocked users
+                    if (usersRef) {
+                        usersRef.once('value', (usersSnapshot) => {
+                            const users = usersSnapshot.val() || {};
+                            updateUsersList(users);
+                        });
+                    }
+                });
+            } catch (error) {
+                console.error('Error loading blocked users:', error);
+            }
         }
-        
-        // Show private message notification
-        function showPrivateMessageNotification(message) {
-            // Create notification element
-            const notification = document.createElement('div');
-            notification.className = 'notification';
-            notification.onclick = () => {
-                openPrivateChat(message.sender, message.senderId);
-                notification.remove();
-            };
+
+        function blockUser(userId, userName) {
+            if (!currentUser || userId === currentUser.id) return;
             
-            notification.innerHTML = `
-                <div class="notification-title">💬 הודעה פרטית מ${message.sender}</div>
-                <div class="notification-message">${escapeHtml(message.text.substring(0, 50))}${message.text.length > 50 ? '...' : ''}</div>
-            `;
+            console.log('Blocking user:', userId, userName);
             
-            document.body.appendChild(notification);
-            
-            // Animate in
-            setTimeout(() => {
-                notification.classList.add('show');
-            }, 100);
-            
-            // Auto remove after 5 seconds
-            setTimeout(() => {
-                if (notification.parentNode) {
-                    notification.classList.remove('show');
-                    setTimeout(() => {
-                        if (notification.parentNode) {
-                            notification.remove();
-                        }
-                    }, 300);
+            try {
+                // Add to my blocked list
+                blockedUsersRef.child(currentUser.id).child(userId).set(true);
+                
+                // Add me to their blocked list (mutual blocking)
+                blockedUsersRef.child(userId).child(currentUser.id).set(true);
+                
+                // Add to local blockedUsers set
+                blockedUsers.add(userId);
+                
+                // Update the button directly
+                const privateMessages = document.getElementById('privateMessages');
+                const buttonArea = privateMessages.children[1]; // Second child is the button area
+                if (buttonArea) {
+                    buttonArea.innerHTML = `<button onclick="unblockUser('${userId}', '${userName}')" style="background: #28a745; color: white; border: none; padding: 8px 15px; border-radius: 5px; font-size: 14px; margin: 5px; cursor: pointer;">בטל חסימה</button>`;
                 }
-            }, 5000);
+                
+                console.log('User blocked successfully');
+                
+            } catch (error) {
+                console.error('Error blocking user:', error);
+                alert('שגיאה בחסימת המשתמש');
+            }
         }
-        
-        // Escape HTML to prevent XSS
-        function escapeHtml(unsafe) {
-            return unsafe
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;")
-                .replace(/"/g, "&quot;")
-                .replace(/'/g, "&#039;");
-        }
-        
-        // Handle Enter key in private message input
-        document.addEventListener('keypress', function(e) {
-            if (e.target.id === 'privateMessageInput' && e.key === 'Enter') {
-                sendPrivateMessage();
-            }
-        });
-        
-        // Handle Enter key in username input
-        document.addEventListener('keypress', function(e) {
-            if (e.target.id === 'usernameInput' && e.key === 'Enter') {
-                joinChat();
-            }
-        });
-        
-        // Clean up on page unload
-        window.addEventListener('beforeunload', function() {
-            if (currentUser && usersRef) {
-                usersRef.child(currentUser.id).remove();
-            }
-        });
-        
-    </script>
-</body>
-</html>
+
+        function unblockUser(userId, userName) {
+            if (!currentUser) return;
+            
+            console.log('Unblocking user:', userId, userName);
