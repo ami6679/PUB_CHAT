@@ -511,7 +511,7 @@
 
     <!-- Main App -->
     <div class="header">
-        <div class="pub-name">🍺 פאב צ'אט <span style="font-size: 12px; opacity: 0.7;">v1.2.5</span></div>
+        <div class="pub-name">🍺 פאב צ'אט <span style="font-size: 12px; opacity: 0.7;">v1.2.6</span></div>
         <div class="online-count" id="onlineCount">מתחבר...</div>
     </div>
     
@@ -1032,13 +1032,8 @@
                 `<button onclick="blockUser('${userId}', '${userName}')" style="background: #dc3545; color: white; border: none; padding: 8px 15px; border-radius: 5px; font-size: 14px; margin: 5px; cursor: pointer;">חסום משתמש</button>`;
             
             // Clear previous messages and add block button
-            const welcomeMessage = isBlocked ? 
-                `<div class="join-message">🚫 צ'אט פרטי עם ${userName} (חסום)</div>` :
-                `<div class="join-message">💬 התחלת צ'אט פרטי עם ${userName}</div>`;
-            
             document.getElementById('privateMessages').innerHTML = `
-                ${welcomeMessage}
-                <div style="text-align: center; padding: 15px; border-bottom: 1px solid #ddd; background: #f8f9fa;">
+                <div style="text-align: center; padding: 10px;">
                     ${blockButtonHTML}
                 </div>
             `;
