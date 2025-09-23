@@ -736,8 +736,12 @@
                 // Add to local blockedUsers set
                 blockedUsers.add(userId);
                 
-                // Update the private chat to show unblock button
-                updatePrivateChatButtons(userId, userName, true);
+                // Update the button directly
+                const privateMessages = document.getElementById('privateMessages');
+                const buttonArea = privateMessages.children[1]; // Second child is the button area
+                if (buttonArea) {
+                    buttonArea.innerHTML = `<button onclick="unblockUser('${userId}', '${userName}')" style="background: #28a745; color: white; border: none; padding: 8px 15px; border-radius: 5px; font-size: 14px; margin: 5px; cursor: pointer;">בטל חסימה</button>`;
+                }
                 
                 alert(`חסמת את ${userName}`);
                 
@@ -764,6 +768,9 @@
                 // Remove from local blockedUsers set
                 blockedUsers.delete(userId);
                 
+                // Update the private chat to show block button
+                updatePrivateChatButtons(userId, userName, false);
+                
                 alert(`ביטלת את החסימה של ${userName}`);
                 
                 console.log('User unblocked successfully');
@@ -771,6 +778,20 @@
             } catch (error) {
                 console.error('Error unblocking user:', error);
                 alert('שגיאה בביטול החסימה');
+            }
+        }
+
+        function updatePrivateChatButtons(userId, userName, isBlocked) {
+            // Update the buttons in the private chat without closing it
+            const buttonHTML = isBlocked ? 
+                `<button onclick="unblockUser('${userId}', '${userName}')" style="background: #28a745; color: white; border: none; padding: 8px 15px; border-radius: 5px; font-size: 14px; margin: 5px; cursor: pointer;">בטל חסימה</button>` :
+                `<button onclick="blockUser('${userId}', '${userName}')" style="background: #dc3545; color: white; border: none; padding: 8px 15px; border-radius: 5px; font-size: 14px; margin: 5px; cursor: pointer;">חסום משתמש</button>`;
+            
+            // Find and update the button area
+            const privateMessages = document.getElementById('privateMessages');
+            const buttonArea = privateMessages.querySelector('div[style*="border-bottom"]');
+            if (buttonArea) {
+                buttonArea.innerHTML = buttonHTML;
             }
         }
 
