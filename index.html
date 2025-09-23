@@ -1,19 +1,4 @@
-.user-card-name {
-            font-weight: bold;
-            margin-bottom: 4px;
-            color: #075e54;
-        }
-        
-        .user-card-name.owner {
-            color: #ffd700;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
-        }
-        
-        .user-card-status {
-            font-size: 12px;
-            color: #666;
-            font-style: italic;
-        }<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -94,76 +79,79 @@
             padding: 8px 12px;
             border-radius: 18px;
             word-wrap: break-word;
-            animation: fadeIn 0.3s ease-in;
+            position: relative;
         }
         
-        .message.received {
-            background: white;
-            align-self: flex-start;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-        }
-        
-        .message.sent {
-            background: #dcf8c6;
+        .message.own {
             align-self: flex-end;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            background: #dcf8c6;
+            color: #000;
         }
         
-        .message-header {
-            font-size: 12px;
+        .message.other {
+            align-self: flex-start;
+            background: #fff;
+            color: #000;
+        }
+        
+        .message.system {
+            align-self: center;
+            background: #fff3cd;
+            color: #856404;
+            font-style: italic;
+            max-width: 80%;
+            text-align: center;
+        }
+        
+        .message-sender {
             font-weight: bold;
-            color: #075e54;
-            margin-bottom: 3px;
-            cursor: pointer;
-            text-decoration: underline;
-        }
-        
-        .message-header:hover {
-            color: #064940;
+            font-size: 12px;
+            margin-bottom: 2px;
+            color: #666;
         }
         
         .message-time {
             font-size: 11px;
             color: #999;
-            float: left;
-            margin-top: 5px;
-            clear: both;
+            margin-top: 2px;
         }
         
-        .message.sent .message-time {
-            float: right;
-        }
-        
-        .input-area {
+        .input-container {
             background: white;
-            padding: 10px 15px;
+            padding: 10px 20px;
             display: flex;
-            align-items: center;
             gap: 10px;
-            border-top: 1px solid #ddd;
+            align-items: center;
+            box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
         }
         
         .message-input {
             flex: 1;
+            padding: 10px 15px;
             border: 1px solid #ddd;
             border-radius: 25px;
-            padding: 10px 15px;
-            font-size: 16px;
             outline: none;
+            font-size: 16px;
+            direction: rtl;
         }
         
         .send-button {
             background: #075e54;
             color: white;
             border: none;
+            padding: 10px 20px;
             border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
             width: 45px;
             height: 45px;
-            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
+        }
+        
+        .send-button:hover {
+            background: #128c7e;
         }
         
         .send-button:disabled {
@@ -171,226 +159,111 @@
             cursor: not-allowed;
         }
         
-        .users-online {
-            background: rgba(7, 94, 84, 0.1);
-            padding: 15px;
-            text-align: center;
-            font-size: 14px;
-            color: #075e54;
-            border-bottom: 1px solid #ddd;
-            min-height: 80px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-        
-        .user-card {
-            background: white;
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            padding: 10px;
-            margin: 5px;
-            cursor: pointer;
-            transition: all 0.2s;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            min-width: 120px;
-            text-align: center;
-        }
-        
-        .user-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-        }
-        
-        .user-card.current-user {
-            cursor: default;
-            background: #f8f8f8;
-        }
-        
-        .user-card.current-user:hover {
-            transform: none;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        
-        .user-card.blocked {
-            background: #ffebee;
-            border: 1px solid #f44336;
-            opacity: 0.7;
-        }
-        
-        .user-card.blocked:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 3px 6px rgba(244, 67, 54, 0.2);
-        }
-        
-        .blocked-indicator {
-            color: #f44336;
-            font-size: 12px;
-            font-weight: bold;
-        }
-        
-        .user-card-photo {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin: 0 auto 8px;
-            display: block;
-            border: 2px solid #075e54;
-        }
-        
-        .user-card-photo.owner {
-            border: 3px solid #ffd700;
-            box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
-        }
-        
-        .no-photo-placeholder {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: #075e54;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 8px;
-            font-size: 18px;
-            font-weight: bold;
-            border: 2px solid #075e54;
-        }
-        
-        .no-photo-placeholder.owner {
-            background: #ffd700;
-            color: #000;
-            border: 3px solid #ffd700;
-            box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
-        }
-        
-        .user-badge {
-            background: #075e54;
-            color: white;
-            padding: 3px 8px;
-            border-radius: 12px;
-            font-size: 12px;
-            cursor: pointer;
-            text-decoration: underline;
-        }
-        
-        .user-badge:hover {
-            background: #064940;
-        }
-        
-        .user-badge.current-user {
-            cursor: default;
-            text-decoration: none;
-            background: #666;
-        }
-        
-        .join-message {
-            text-align: center;
-            color: #888;
-            font-size: 14px;
-            font-style: italic;
-            padding: 10px;
-            animation: fadeIn 0.3s ease-in;
-        }
-        
-        .private-chat {
-            display: none;
+        .users-sidebar {
             position: fixed;
-            bottom: 0;
-            right: 20px;
+            right: -300px;
+            top: 0;
             width: 300px;
-            height: 400px;
+            height: 100%;
             background: white;
-            border: 1px solid #ddd;
-            border-radius: 8px 8px 0 0;
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            box-shadow: -2px 0 10px rgba(0,0,0,0.1);
+            transition: right 0.3s ease;
             z-index: 1000;
+            display: flex;
             flex-direction: column;
         }
         
-        .private-chat.show {
-            display: flex;
+        .users-sidebar.open {
+            right: 0;
         }
         
-        .private-header {
+        .users-header {
             background: #075e54;
             color: white;
-            padding: 12px 15px;
-            border-radius: 8px 8px 0 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            padding: 20px;
+            text-align: center;
         }
         
-        .close-chat {
+        .users-list {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .user-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-bottom: 5px;
+            transition: background 0.2s;
+        }
+        
+        .user-item:hover {
+            background: #f0f0f0;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #075e54;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        
+        .user-name {
+            font-weight: bold;
+        }
+        
+        .users-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #075e54;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 1001;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .close-sidebar {
+            position: absolute;
+            top: 20px;
+            left: 20px;
             background: none;
             border: none;
             color: white;
-            font-size: 18px;
+            font-size: 20px;
             cursor: pointer;
-            padding: 5px;
         }
         
-        .private-messages {
-            flex: 1;
-            padding: 10px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            background: #e5ddd5;
-        }
-        
-        .private-input-area {
-            background: white;
-            padding: 8px 12px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            border-top: 1px solid #ddd;
-        }
-        
-        .private-input {
-            flex: 1;
-            border: 1px solid #ddd;
-            border-radius: 20px;
-            padding: 8px 12px;
-            font-size: 14px;
-            outline: none;
-        }
-        
-        .private-send {
-            background: #075e54;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 35px;
-            height: 35px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
-        }
-        
-        .username-modal {
+        .modal {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.7);
+            background: rgba(0,0,0,0.5);
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 9999;
+            z-index: 2000;
         }
         
-        .username-modal.hidden {
+        .modal.hidden {
             display: none;
         }
         
@@ -398,78 +271,23 @@
             background: white;
             padding: 30px;
             border-radius: 10px;
-            text-align: center;
             max-width: 400px;
             width: 90%;
+            text-align: center;
+            direction: rtl;
         }
         
-        .modal-content h2 {
-            margin-bottom: 20px;
-            color: #075e54;
-        }
-        
-        .modal-content input {
+        .modal input {
             width: 100%;
             padding: 12px;
+            margin: 10px 0;
             border: 1px solid #ddd;
             border-radius: 5px;
             font-size: 16px;
-            margin-bottom: 20px;
-            text-align: center;
+            direction: rtl;
         }
         
-        .photo-upload {
-            margin-bottom: 20px;
-            text-align: center;
-        }
-        
-        .photo-preview {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid #075e54;
-            margin-bottom: 10px;
-            display: none;
-        }
-        
-        .upload-btn {
-            background: #f0f0f0;
-            border: 2px dashed #075e54;
-            padding: 20px;
-            border-radius: 10px;
-            cursor: pointer;
-            color: #075e54;
-            font-size: 14px;
-        }
-        
-        .upload-btn:hover {
-            background: #e8f5f3;
-        }
-        
-        #photoInput {
-            display: none;
-        }
-        
-        .user-photo {
-            width: 25px;
-            height: 25px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-left: 5px;
-            vertical-align: middle;
-        }
-        
-        .message-photo {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-left: 5px;
-            vertical-align: middle;
-        }
-        
-        .modal-content button {
+        .modal button {
             background: #075e54;
             color: white;
             border: none;
@@ -477,96 +295,88 @@
             border-radius: 5px;
             font-size: 16px;
             cursor: pointer;
+            margin: 5px;
         }
         
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        .modal button:hover {
+            background: #128c7e;
         }
         
-        @keyframes slideDown {
-            from { opacity: 0; transform: translate(-50%, -20px); }
-            to { opacity: 1; transform: translate(-50%, 0); }
+        .private-chat-header {
+            background: #1a73e8;
+            color: white;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .back-button {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+        }
+        
+        @media (max-width: 768px) {
+            .users-sidebar {
+                width: 100%;
+                right: -100%;
+            }
+            
+            .message {
+                max-width: 85%;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Loading Screen -->
-    <div class="loading" id="loading">
-        <div>🔄 מתחבר לשרת...</div>
-    </div>
-
-    <!-- Username Modal -->
-    <div class="username-modal" id="usernameModal">
+    <div class="loading" id="loading">טוען...</div>
+    
+    <div class="modal" id="nameModal">
         <div class="modal-content">
-            <h2>🍺 ברוכים הבאים לפאב צ'אט!</h2>
-            <p>ספר לנו קצת על עצמך</p>
-            
-            <div class="photo-upload">
-                <img id="photoPreview" class="photo-preview">
-                <div class="upload-btn" onclick="document.getElementById('photoInput').click()">
-                    📷 הוסף תמונת פרופיל<br>
-                    <small>(אופציונלי)</small>
-                </div>
-                <input type="file" id="photoInput" accept="image/*" onchange="previewPhoto(this)">
-            </div>
-            
-            <input type="text" id="usernameInput" placeholder="השם שלך..." maxlength="20">
-            
-            <input type="password" id="ownerPassword" placeholder="סיסמת OWNER (אופציונלי)" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; font-size: 16px; margin-bottom: 10px; text-align: center;">
-            
-            <select id="statusSelect" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; font-size: 16px; margin-bottom: 20px; text-align: center;">
-                <option value="">בחר סטטוס (אופציונלי)</option>
-                <option value="פנוי">פנוי</option>
-                <option value="תפוס">תפוס</option>
-                <option value="מבולבל">מבולבל</option>
-            </select>
-            
+            <h2>ברוכים הבאים לפאב צ'אט!</h2>
+            <p>אנא הכניסו את שמכם:</p>
+            <input type="text" id="nameInput" placeholder="השם שלכם" maxlength="20">
             <br>
-            <button onclick="joinChat()">הצטרף לצ'אט</button>
+            <button onclick="setUserName()">התחבר</button>
         </div>
     </div>
-
-    <!-- Main App -->
-    <div class="header">
-        <div class="pub-name">🍺 פאב צ'אט <span style="font-size: 12px; opacity: 0.7;">v1.3.0</span></div>
-        <div class="online-count" id="onlineCount">מתחבר...</div>
+    
+    <div class="header" id="chatHeader">
+        <div class="pub-name">צ'אט כללי</div>
+        <div class="online-count" id="onlineCount">0 משתתפים</div>
     </div>
     
-    <div class="users-online" id="usersOnline">
-        <div>מטען משתמשים...</div>
+    <div class="private-chat-header hidden" id="privateChatHeader">
+        <button class="back-button" onclick="exitPrivateChat()">←</button>
+        <div>צ'אט פרטי עם <span id="privateChatName"></span></div>
+        <div></div>
     </div>
+    
+    <button class="users-toggle" onclick="toggleUsers()">👥</button>
     
     <div class="chat-container">
-        <div class="messages" id="messages">
-            <div class="join-message">🎉 ברוכים הבאים לפאב צ'אט!</div>
-        </div>
-        
-        <div class="input-area">
-            <input type="text" class="message-input" placeholder="כתוב הודעה..." id="messageInput" disabled>
-            <button class="send-button" onclick="sendMessage()" id="sendButton" disabled>➤</button>
+        <div class="messages" id="messages"></div>
+        <div class="input-container">
+            <input type="text" class="message-input" id="messageInput" placeholder="כתבו הודעה..." maxlength="500">
+            <button class="send-button" id="sendButton" onclick="sendMessage()">→</button>
         </div>
     </div>
     
-    <!-- Private Chat Window -->
-    <div class="private-chat" id="privateChat">
-        <div class="private-header">
-            <span id="privateChatName">צ'אט פרטי</span>
-            <button class="close-chat" onclick="closePrivateChat()">×</button>
+    <div class="users-sidebar" id="usersSidebar">
+        <div class="users-header">
+            <button class="close-sidebar" onclick="toggleUsers()">×</button>
+            <h3>משתתפים</h3>
         </div>
-        <div class="private-messages" id="privateMessages">
-        </div>
-        <div class="private-input-area">
-            <input type="text" class="private-input" placeholder="הודעה פרטית..." id="privateInput" disabled>
-            <button class="private-send" onclick="sendPrivateMessage()" id="privateSendButton" disabled>➤</button>
-        </div>
+        <div class="users-list" id="usersList"></div>
     </div>
 
     <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-storage-compat.js"></script>
-    
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+
     <script>
         // Firebase Configuration
         const firebaseConfig = {
@@ -580,383 +390,185 @@
         };
 
         // Initialize Firebase
-        let app, database, storage;
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        
+        // Global variables
         let currentUser = null;
         let currentPrivateChat = null;
         let messagesRef = null;
         let usersRef = null;
-        let privateMessagesRef = null;
-        let blockedUsersRef = null;
-        let processedMessages = new Set(); // Track processed private messages
-        let blockedUsers = new Set(); // Track blocked users
+        let lastMessageTime = 0;
         
-        // Owner configuration
-        const OWNER_PASSWORD = "pub123"; // Change this to your desired password
-        let isOwner = false;
-
-        function initFirebase() {
-            try {
-                app = firebase.initializeApp(firebaseConfig);
-                database = firebase.database();
-                storage = firebase.storage();
-                
-                // References
-                messagesRef = database.ref('messages');
-                usersRef = database.ref('users');
-                privateMessagesRef = database.ref('privateMessages');
-                blockedUsersRef = database.ref('blockedUsers');
-                
-                // Listen to connection status
-                const connectedRef = database.ref('.info/connected');
-                connectedRef.on('value', (snapshot) => {
-                    if (snapshot.val() === true) {
-                        document.getElementById('loading').classList.add('hidden');
-                        console.log('Connected to Firebase');
-                    } else {
-                        console.log('Disconnected from Firebase');
-                    }
-                });
-                
-                return true;
-            } catch (error) {
-                console.error('Firebase initialization error:', error);
-                document.getElementById('loading').innerHTML = '<div>⚠️ שגיאת חיבור. בדוק את ההגדרות.</div>';
-                return false;
-            }
-        }
-
-        function previewPhoto(input) {
-            if (input.files && input.files[0]) {
-                const file = input.files[0];
-                
-                // Check file size (max 5MB)
-                if (file.size > 5 * 1024 * 1024) {
-                    alert('התמונה גדולה מדי. בחר תמונה עד 5MB');
-                    input.value = '';
-                    return;
-                }
-                
-                const reader = new FileReader();
-                const preview = document.getElementById('photoPreview');
-                
-                reader.onload = function(e) {
-                    preview.src = e.target.result;
-                    preview.style.display = 'block';
-                    
-                    // Update upload button text
-                    const uploadBtn = document.querySelector('.upload-btn');
-                    uploadBtn.innerHTML = '✅ תמונה נבחרה<br><small>לחץ כדי לשנות</small>';
-                };
-                
-                reader.readAsDataURL(file);
-            }
-        }
-
-        async function uploadPhoto(file) {
-            if (!file) return null;
+        // DOM elements
+        const loading = document.getElementById('loading');
+        const nameModal = document.getElementById('nameModal');
+        const nameInput = document.getElementById('nameInput');
+        const messagesDiv = document.getElementById('messages');
+        const messageInput = document.getElementById('messageInput');
+        const sendButton = document.getElementById('sendButton');
+        const usersSidebar = document.getElementById('usersSidebar');
+        const usersList = document.getElementById('usersList');
+        const onlineCount = document.getElementById('onlineCount');
+        const chatHeader = document.getElementById('chatHeader');
+        const privateChatHeader = document.getElementById('privateChatHeader');
+        const privateChatName = document.getElementById('privateChatName');
+        
+        // Initialize app
+        function init() {
+            loading.classList.add('hidden');
+            nameModal.classList.remove('hidden');
             
-            try {
-                console.log('Starting photo upload...');
-                
-                // Create unique filename
-                const filename = `profile_${Date.now()}_${Math.random().toString(36).substring(7)}.jpg`;
-                const storageRef = storage.ref(`profile-photos/${filename}`);
-                
-                console.log('Uploading to:', filename);
-                
-                // Upload file
-                const uploadTask = await storageRef.put(file);
-                console.log('Upload completed');
-                
-                const downloadURL = await uploadTask.ref.getDownloadURL();
-                console.log('Download URL:', downloadURL);
-                
-                return downloadURL;
-            } catch (error) {
-                console.error('Error uploading photo:', error);
-                alert('שגיאה בהעלאת התמונה: ' + error.message);
-                return null;
-            }
+            messageInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+            
+            nameInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    setUserName();
+                }
+            });
         }
-
-        async function joinChat() {
-            try {
-                const usernameInput = document.getElementById('usernameInput');
-                const photoInput = document.getElementById('photoInput');
-                const statusSelect = document.getElementById('statusSelect');
-                const username = usernameInput.value.trim();
-                const status = statusSelect.value;
-                
-                console.log('Join chat started. Username:', username, 'Status:', status);
-                
-                if (!username) {
-                    alert('אנא הכנס שם');
-                    return;
-                }
-                
-                if (username.length > 20) {
-                    alert('השם צריך להיות עד 20 תווים');
-                    return;
-                }
-                
-                // Show loading
-                document.getElementById('loading').classList.remove('hidden');
-                document.getElementById('loading').innerHTML = '<div>📤 מעלה פרטים...</div>';
-                
-                // Upload photo if selected
-                let photoURL = null;
-                if (photoInput.files && photoInput.files[0]) {
-                    console.log('Uploading photo...');
-                    photoURL = await uploadPhoto(photoInput.files[0]);
-                    if (photoURL === null) {
-                        document.getElementById('loading').classList.add('hidden');
-                        return; // Upload failed
-                    }
-                    console.log('Photo uploaded successfully:', photoURL);
-                } else {
-                    console.log('No photo selected');
-                }
-                
-                currentUser = {
-                    name: username,
-                    id: Date.now() + '_' + Math.floor(Math.random() * 10000),
-                    joinTime: Date.now(),
-                    photoURL: photoURL,
-                    status: status
-                };
-                
-                console.log('Current user created:', currentUser);
-                
-                // Add user to online users
-                const userRef = usersRef.child(currentUser.id);
-                await userRef.set(currentUser);
-                console.log('User added to database');
-                
-                // Remove user when disconnecting
-                userRef.onDisconnect().remove();
-                
-                // Hide loading and username modal
-                document.getElementById('loading').classList.add('hidden');
-                document.getElementById('usernameModal').classList.add('hidden');
-                
-                // Enable inputs
-                document.getElementById('messageInput').disabled = false;
-                document.getElementById('sendButton').disabled = false;
-                document.getElementById('privateInput').disabled = false;
-                document.getElementById('privateSendButton').disabled = false;
-                
-                // Listen to messages and users
-                setupListeners();
-                
-                // Add join message
-                addSystemMessage(`${username} הצטרף/ה לצ'אט`);
-                
-                console.log('Join chat completed successfully');
-                
-            } catch (error) {
-                console.error('Error in joinChat:', error);
-                document.getElementById('loading').classList.add('hidden');
-                alert('שגיאה בהצטרפות לצ\'אט: ' + error.message);
-            }
-        }
-
-        function blockUser(userId, userName) {
-            if (!currentUser || userId === currentUser.id) return;
-            
-            console.log('Blocking user:', userId, userName);
-            
-            try {
-                // Add to my blocked list
-                blockedUsersRef.child(currentUser.id).child(userId).set(true);
-                
-                // Add me to their blocked list (mutual blocking)
-                blockedUsersRef.child(userId).child(currentUser.id).set(true);
-                
-                // Add to local blockedUsers set
-                blockedUsers.add(userId);
-                
-                // Update the button directly
-                const privateMessages = document.getElementById('privateMessages');
-                const buttonArea = privateMessages.children[1]; // Second child is the button area
-                if (buttonArea) {
-                    buttonArea.innerHTML = `<button onclick="unblockUser('${userId}', '${userName}')" style="background: #28a745; color: white; border: none; padding: 8px 15px; border-radius: 5px; font-size: 14px; margin: 5px; cursor: pointer;">בטל חסימה</button>`;
-                }
-                
-                console.log('User blocked successfully');
-                
-            } catch (error) {
-                console.error('Error blocking user:', error);
-                alert('שגיאה בחסימת המשתמש');
-            }
-        }
-
-        function unblockUser(userId, userName) {
-            if (!currentUser) return;
-            
-            console.log('Unblocking user:', userId, userName);
-            
-            try {
-                // Remove from my blocked list
-                blockedUsersRef.child(currentUser.id).child(userId).remove();
-                
-                // Remove me from their blocked list
-                blockedUsersRef.child(userId).child(currentUser.id).remove();
-                
-                // Remove from local blockedUsers set
-                blockedUsers.delete(userId);
-                
-                // Update the button directly
-                const privateMessages = document.getElementById('privateMessages');
-                const buttonArea = privateMessages.children[1]; // Second child is the button area
-                if (buttonArea) {
-                    buttonArea.innerHTML = `<button onclick="blockUser('${userId}', '${userName}')" style="background: #dc3545; color: white; border: none; padding: 8px 15px; border-radius: 5px; font-size: 14px; margin: 5px; cursor: pointer;">חסום משתמש</button>`;
-                }
-                
-                console.log('User unblocked successfully');
-                
-            } catch (error) {
-                console.error('Error unblocking user:', error);
-                alert('שגיאה בביטול החסימה');
-            }
-        }
-
-        function unblockUser(userId, userName) {
-            if (!currentUser) return;
-            
-            console.log('Unblocking user:', userId, userName);
-            
-            try {
-                // Remove from my blocked list
-                blockedUsersRef.child(currentUser.id).child(userId).remove();
-                
-                // Remove me from their blocked list
-                blockedUsersRef.child(userId).child(currentUser.id).remove();
-                
-                // Remove from local blockedUsers set
-                blockedUsers.delete(userId);
-                
-                // Update the button directly
-                const privateMessages = document.getElementById('privateMessages');
-                const buttonArea = privateMessages.children[1]; // Second child is the button area
-                if (buttonArea) {
-                    buttonArea.innerHTML = `<button onclick="blockUser('${userId}', '${userName}')" style="background: #dc3545; color: white; border: none; padding: 8px 15px; border-radius: 5px; font-size: 14px; margin: 5px; cursor: pointer;">חסום משתמש</button>`;
-                }
-                
-                console.log('User unblocked successfully');
-                
-            } catch (error) {
-                console.error('Error unblocking user:', error);
-                alert('שגיאה בביטול החסימה');
-            }
-        }
-
-        function setupListeners() {
-
-        function loadBlockedUsers() {
-            if (!currentUser || !blockedUsersRef) {
-                console.log('Cannot load blocked users - user or ref not ready');
+        
+        // Set user name and join chat
+        function setUserName() {
+            const name = nameInput.value.trim();
+            if (!name) {
+                alert('אנא הכניסו שם');
                 return;
             }
             
-            try {
-                const userBlockedRef = blockedUsersRef.child(currentUser.id);
-                userBlockedRef.on('value', (snapshot) => {
-                    const blocked = snapshot.val() || {};
-                    blockedUsers.clear();
-                    Object.keys(blocked).forEach(blockedId => {
-                        blockedUsers.add(blockedId);
-                    });
-                    console.log('Blocked users loaded:', Array.from(blockedUsers));
-                    
-                    // Refresh users list to hide blocked users
-                    if (usersRef) {
-                        usersRef.once('value', (usersSnapshot) => {
-                            const users = usersSnapshot.val() || {};
-                            updateUsersList(users);
-                        });
-                    }
-                });
-            } catch (error) {
-                console.error('Error loading blocked users:', error);
+            if (name.length > 20) {
+                alert('השם ארוך מדי (מקסימום 20 תווים)');
+                return;
             }
+            
+            currentUser = {
+                id: 'user_' + Date.now() + '_' + Math.floor(Math.random() * 10000),
+                name: name,
+                joinTime: Date.now()
+            };
+            
+            nameModal.classList.add('hidden');
+            startChat();
         }
-
-        function blockUser(userId, userName) {
-            if (!currentUser || userId === currentUser.id) return;
+        
+        // Start chat functionality
+        function startChat() {
+            setupDatabase();
+            addUserToOnlineList();
+            setupMessageListener();
+            setupUsersListener();
             
-            // Add to my blocked list
-            blockedUsersRef.child(currentUser.id).child(userId).set(true);
+            // Send join message
+            setTimeout(() => {
+                sendSystemMessage(`${currentUser.name} הצטרף לצ'אט`);
+            }, 1000);
             
-            // Add me to their blocked list (mutual blocking)
-            blockedUsersRef.child(userId).child(currentUser.id).set(true);
-            
-            // Close private chat
-            closePrivateChat();
-            
-            alert(`חסמת את ${userName}`);
-        }
-
-        function unblockUser(userId, userName) {
-            if (!currentUser) return;
-            
-            // Remove from my blocked list
-            blockedUsersRef.child(currentUser.id).child(userId).remove();
-            
-            // Remove me from their blocked list
-            blockedUsersRef.child(userId).child(currentUser.id).remove();
-            
-            alert(`ביטלת את החסימה של ${userName}`);
-        }
-            // Listen to messages
-            messagesRef.on('child_added', (snapshot) => {
-                const message = snapshot.val();
-                displayMessage(message);
-            });
-            
-            // Listen to users
-            usersRef.on('value', (snapshot) => {
-                const users = snapshot.val() || {};
-                updateUsersList(users);
-            });
-            
-            // Listen to ALL private messages to detect new ones for current user
-            privateMessagesRef.on('child_added', (snapshot) => {
-                const chatData = snapshot.val();
-                const chatId = snapshot.key;
-                
-                // Check if this chat involves current user
-                if (chatId && chatId.includes(currentUser.id)) {
-                    // Listen to new messages in this specific chat
-                    privateMessagesRef.child(chatId).on('child_added', (messageSnapshot) => {
-                        const message = messageSnapshot.val();
-                        
-                        // If message is for me and I didn't send it
-                        if (message && message.recipientId === currentUser.id && message.senderId !== currentUser.id) {
-                            // Skip if sender is blocked
-                            if (blockedUsers.has(message.senderId)) return;
-                            
-                            // Check if this is a NEW message (not processed before)
-                            const messageKey = `${chatId}_${message.id}`;
-                            if (!processedMessages.has(messageKey)) {
-                                processedMessages.add(messageKey);
-                                
-                                // Show notification only if private chat is not open with this person
-                                if (!currentPrivateChat || currentPrivateChat.id !== message.senderId) {
-                                    showPrivateMessageNotification(message);
-                                }
-                            }
-                        }
-                    });
+            // Handle page close
+            window.addEventListener('beforeunload', function() {
+                if (currentUser) {
+                    removeUserFromOnlineList();
                 }
             });
         }
-
-        function sendMessage() {
-            const input = document.getElementById('messageInput');
-            const text = input.value.trim();
+        
+        // Setup database references
+        function setupDatabase() {
+            messagesRef = database.ref('messages');
+            usersRef = database.ref('users');
+        }
+        
+        // Add user to online list
+        function addUserToOnlineList() {
+            const userRef = usersRef.child(currentUser.id);
+            userRef.set({
+                name: currentUser.name,
+                joinTime: currentUser.joinTime,
+                lastSeen: firebase.database.ServerValue.TIMESTAMP
+            });
             
+            // Remove user when disconnected
+            userRef.onDisconnect().remove();
+        }
+        
+        // Remove user from online list
+        function removeUserFromOnlineList() {
+            if (currentUser) {
+                usersRef.child(currentUser.id).remove();
+                sendSystemMessage(`${currentUser.name} עזב את הצ'אט`);
+            }
+        }
+        
+        // Setup message listener
+        function setupMessageListener() {
+            messagesRef.orderByChild('timestamp').limitToLast(50).on('child_added', function(snapshot) {
+                const message = snapshot.val();
+                if (message.timestamp > lastMessageTime) {
+                    displayMessage(message);
+                    lastMessageTime = message.timestamp;
+                }
+            });
+        }
+        
+        // Setup users listener
+        function setupUsersListener() {
+            usersRef.on('value', function(snapshot) {
+                const users = snapshot.val() || {};
+                updateUsersList(users);
+                updateOnlineCount(Object.keys(users).length);
+            });
+        }
+        
+        // Update users list in sidebar
+        function updateUsersList(users) {
+            usersList.innerHTML = '';
+            
+            Object.keys(users).forEach(userId => {
+                if (userId === currentUser.id) return;
+                
+                const user = users[userId];
+                const userDiv = document.createElement('div');
+                userDiv.className = 'user-item';
+                userDiv.onclick = () => startPrivateChat(user);
+                
+                userDiv.innerHTML = `
+                    <div class="user-avatar">${user.name.charAt(0).toUpperCase()}</div>
+                    <div class="user-name">${user.name}</div>
+                `;
+                
+                usersList.appendChild(userDiv);
+            });
+        }
+        
+        // Update online count
+        function updateOnlineCount(count) {
+            onlineCount.textContent = `${count} משתתפים`;
+        }
+        
+        // Send message
+        function sendMessage() {
+            const text = messageInput.value.trim();
             if (!text || !currentUser) return;
             
+            if (text.length > 500) {
+                alert('ההודעה ארוכה מדי (מקסימום 500 תווים)');
+                return;
+            }
+            
+            if (currentPrivateChat) {
+                sendPrivateMessage(text);
+            } else {
+                sendPublicMessage(text);
+            }
+            
+            messageInput.value = '';
+        }
+        
+        // Send public message
+        function sendPublicMessage(text) {
             const message = {
                 id: Date.now() + '_' + Math.floor(Math.random() * 10000),
                 text: text,
@@ -967,190 +579,27 @@
             };
             
             messagesRef.push(message);
-            input.value = '';
         }
-
-        function displayMessage(message) {
-            const messagesContainer = document.getElementById('messages');
-            const messageDiv = document.createElement('div');
+        
+        // Send private message
+        function sendPrivateMessage(text) {
+            const chatId = [currentUser.id, currentPrivateChat.id].sort().join('_');
+            const message = {
+                id: Date.now() + '_' + Math.floor(Math.random() * 10000),
+                text: text,
+                sender: currentUser.name,
+                senderId: currentUser.id,
+                recipient: currentPrivateChat.name,
+                recipientId: currentPrivateChat.id,
+                timestamp: Date.now(),
+                chatId: chatId
+            };
             
-            const isOwn = message.senderId === currentUser?.id;
-            messageDiv.className = `message ${isOwn ? 'sent' : 'received'}`;
-            
-            let messageHTML = '';
-            if (!isOwn && message.type !== 'system') {
-                // Find user photo from users list (we'll need to pass it with message in future)
-                let userPhoto = '';
-                // For now, we'll get photo from the message sender data if available
-                messageHTML += `<div class="message-header" onclick="openPrivateChat('${message.sender}', '${message.senderId}')">${message.sender}${userPhoto}</div>`;
-            }
-            messageHTML += `<div style="margin-bottom: 15px;">${escapeHtml(message.text)}</div>`;
-            messageHTML += `<div class="message-time">${formatTime(message.timestamp)}</div>`;
-            
-            messageDiv.innerHTML = messageHTML;
-            messagesContainer.appendChild(messageDiv);
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            database.ref('privateMessages').push(message);
         }
-
-        function updateUsersList(users) {
-            const usersContainer = document.getElementById('usersOnline');
-            const userCount = Object.keys(users).length;
-            
-            document.getElementById('onlineCount').textContent = `${userCount} ${userCount === 1 ? 'אדם מחובר' : 'אנשים מחוברים'}`;
-            
-            usersContainer.innerHTML = '';
-            
-            Object.values(users).forEach(user => {
-                // Show all users, but mark blocked ones differently
-                const isBlocked = blockedUsers.has(user.id);
-                const userCard = document.createElement('div');
-                userCard.className = `user-card ${user.id === currentUser?.id ? 'current-user' : ''} ${isBlocked ? 'blocked' : ''}`;
-                
-                // Photo or placeholder
-                let photoHTML = '';
-                if (user.photoURL) {
-                    const ownerClass = user.isOwner ? 'owner' : '';
-                    photoHTML = `<img src="${user.photoURL}" class="user-card-photo ${ownerClass}" alt="פרופיל">`;
-                } else {
-                    const initial = user.name.charAt(0).toUpperCase();
-                    const ownerClass = user.isOwner ? 'owner' : '';
-                    photoHTML = `<div class="no-photo-placeholder ${ownerClass}">${initial}</div>`;
-                }
-                
-                // Status display
-                let statusHTML = '';
-                if (user.status) {
-                    statusHTML = `<div class="user-card-status">${user.status}</div>`;
-                }
-                
-                // Owner indicator and name styling
-                const nameClass = user.isOwner ? 'owner' : '';
-                const ownerTag = user.isOwner ? ' 👑' : '';
-                
-                // Blocked indicator
-                const blockedHTML = isBlocked ? `<div class="blocked-indicator">🚫 חסום</div>` : '';
-                
-                userCard.innerHTML = `
-                    ${photoHTML}
-                    <div class="user-card-name ${nameClass}">${user.name}${ownerTag}</div>
-                    ${statusHTML}
-                    ${blockedHTML}
-                `;
-                
-                if (user.id !== currentUser?.id) {
-                    userCard.onclick = () => openPrivateChat(user.name, user.id);
-                }
-                
-                usersContainer.appendChild(userCard);
-            });
-        }
-
-        function openPrivateChat(userName, userId) {
-            if (userId === currentUser?.id) return;
-            
-            currentPrivateChat = { name: userName, id: userId };
-            
-            document.getElementById('privateChatName').textContent = `צ'אט פרטי עם ${userName}`;
-            document.getElementById('privateChat').classList.add('show');
-            
-            // Check if user is blocked to show appropriate button
-            const isBlocked = blockedUsers.has(userId);
-            const blockButtonHTML = isBlocked ? 
-                `<button onclick="unblockUser('${userId}', '${userName}')" style="background: #28a745; color: white; border: none; padding: 8px 15px; border-radius: 5px; font-size: 14px; margin: 5px; cursor: pointer;">בטל חסימה</button>` :
-                `<button onclick="blockUser('${userId}', '${userName}')" style="background: #dc3545; color: white; border: none; padding: 8px 15px; border-radius: 5px; font-size: 14px; margin: 5px; cursor: pointer;">חסום משתמש</button>`;
-            
-            // Clear previous messages and add block button
-            const welcomeMessage = isBlocked ? 
-                `<div class="join-message">🚫 צ'אט פרטי עם ${userName} (חסום)</div>` :
-                `<div class="join-message">💬 התחלת צ'אט פרטי עם ${userName}</div>`;
-            
-            document.getElementById('privateMessages').innerHTML = `
-                ${welcomeMessage}
-                <div style="text-align: center; padding: 15px; border-bottom: 1px solid #ddd; background: #f8f9fa;">
-                    ${blockButtonHTML}
-                </div>
-            `;
-            
-            // Listen to private messages for this chat
-            const chatId = [currentUser.id, userId].sort().join('_');
-            const privateChatRef = privateMessagesRef.child(chatId);
-            
-            privateChatRef.off(); // Remove previous listeners
-            privateChatRef.on('child_added', (snapshot) => {
-                const message = snapshot.val();
-                displayPrivateMessage(message);
-            });
-        }
-
-        function closePrivateChat() {
-            document.getElementById('privateChat').classList.remove('show');
-            currentPrivateChat = null;
-        }
-
-        function sendPrivateMessage() {
-            const input = document.getElementById('privateInput');
-            const text = input.value.trim();
-            
-            if (!text || !currentPrivateChat || !currentUser) return;
-            
-            // Check if recipient is blocked (I blocked them)
-            if (blockedUsers.has(currentPrivateChat.id)) {
-                alert('לא ניתן לשלוח הודעה למשתמש חסום');
-                return;
-            }
-            
-            // Check if I'm blocked by the recipient - we'll check this via Firebase
-            blockedUsersRef.child(currentPrivateChat.id).child(currentUser.id).once('value', (snapshot) => {
-                if (snapshot.exists()) {
-                    // I'm blocked by the recipient
-                    alert('לא ניתן לשלוח הודעה - המשתמש חסם אותך');
-                    return;
-                }
-                
-                // Send the message
-                const chatId = [currentUser.id, currentPrivateChat.id].sort().join('_');
-                const message = {
-                    id: Date.now() + '_' + Math.floor(Math.random() * 10000),
-                    text: text,
-                    sender: currentUser.name,
-                    senderId: currentUser.id,
-                    recipient: currentPrivateChat.name,
-                    recipientId: currentPrivateChat.id,
-                    timestamp: Date.now(),
-                    chatId: chatId
-                };
-                
-                privateMessagesRef.child(chatId).push(message);
-                input.value = '';
-            });
-        }
-
-        function displayPrivateMessage(message) {
-            // Skip messages from blocked users
-            if (blockedUsers.has(message.senderId)) {
-                console.log('Blocked message from:', message.sender);
-                return;
-            }
-            
-            const messagesContainer = document.getElementById('privateMessages');
-            const messageDiv = document.createElement('div');
-            
-            const isOwn = message.senderId === currentUser?.id;
-            messageDiv.className = `message ${isOwn ? 'sent' : 'received'}`;
-            
-            let messageHTML = '';
-            if (!isOwn) {
-                messageHTML += `<div class="message-header">${message.sender}</div>`;
-            }
-            messageHTML += `<div style="margin-bottom: 15px;">${escapeHtml(message.text)}</div>`;
-            messageHTML += `<div class="message-time">${formatTime(message.timestamp)}</div>`;
-            
-            messageDiv.innerHTML = messageHTML;
-            messagesContainer.appendChild(messageDiv);
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
-        }
-
-        function addSystemMessage(text) {
+        
+        // Send system message
+        function sendSystemMessage(text) {
             const message = {
                 id: Date.now() + '_system',
                 text: text,
@@ -1162,106 +611,109 @@
             
             messagesRef.push(message);
         }
-
-        function formatTime(timestamp) {
-            const date = new Date(timestamp);
-            const hours = date.getHours().toString().padStart(2, '0');
-            const minutes = date.getMinutes().toString().padStart(2, '0');
-            return `${hours}:${minutes}`;
-        }
-
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-
-        function showPrivateMessageNotification(message) {
-            // Skip notifications from blocked users
-            if (blockedUsers.has(message.senderId)) {
-                console.log('Blocked notification from:', message.sender);
-                return;
+        
+        // Display message
+        function displayMessage(message) {
+            // Don't show private messages in public chat
+            if (!currentPrivateChat && message.chatId) return;
+            // Don't show public messages in private chat
+            if (currentPrivateChat && !message.chatId) return;
+            // Show only relevant private messages
+            if (currentPrivateChat && message.chatId) {
+                const expectedChatId = [currentUser.id, currentPrivateChat.id].sort().join('_');
+                if (message.chatId !== expectedChatId) return;
             }
             
-            // Visual notification in app
-            const notificationDiv = document.createElement('div');
-            notificationDiv.style.cssText = `
-                position: fixed;
-                top: 20px;
-                left: 50%;
-                transform: translateX(-50%);
-                background: #ff4444;
-                color: white;
-                padding: 12px 20px;
-                border-radius: 8px;
-                z-index: 10000;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-                font-size: 14px;
-                cursor: pointer;
-                animation: slideDown 0.3s ease-out;
-            `;
-            notificationDiv.innerHTML = `💬 ${message.sender}: ${escapeHtml(message.text)}`;
+            const messageDiv = document.createElement('div');
+            let messageClass = 'message';
             
-            // Click to open private chat
-            notificationDiv.onclick = () => {
-                openPrivateChat(message.sender, message.senderId);
-                document.body.removeChild(notificationDiv);
+            if (message.type === 'system') {
+                messageClass += ' system';
+            } else if (message.senderId === currentUser.id) {
+                messageClass += ' own';
+            } else {
+                messageClass += ' other';
+            }
+            
+            messageDiv.className = messageClass;
+            
+            const time = new Date(message.timestamp).toLocaleTimeString('he-IL', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            
+            let messageHTML = '';
+            
+            if (message.type !== 'system' && message.senderId !== currentUser.id) {
+                messageHTML += `<div class="message-sender">${message.sender}</div>`;
+            }
+            
+            messageHTML += `<div>${message.text}</div>`;
+            messageHTML += `<div class="message-time">${time}</div>`;
+            
+            messageDiv.innerHTML = messageHTML;
+            messagesDiv.appendChild(messageDiv);
+            
+            // Scroll to bottom
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+        
+        // Start private chat
+        function startPrivateChat(user) {
+            currentPrivateChat = {
+                id: Object.keys(firebase.database().ref('users').once('value').val() || {}).find(id => 
+                    firebase.database().ref('users').child(id).once('value').val().name === user.name
+                ) || user.id,
+                name: user.name
             };
             
-            document.body.appendChild(notificationDiv);
+            // Clear messages
+            messagesDiv.innerHTML = '';
             
-            // Remove after 5 seconds
-            setTimeout(() => {
-                if (document.body.contains(notificationDiv)) {
-                    document.body.removeChild(notificationDiv);
-                }
-            }, 5000);
+            // Update UI
+            chatHeader.classList.add('hidden');
+            privateChatHeader.classList.remove('hidden');
+            privateChatName.textContent = user.name;
+            usersSidebar.classList.remove('open');
             
-            // Browser notification (if permission granted)
-            if (Notification.permission === 'granted') {
-                new Notification(`הודעה פרטית מ${message.sender}`, {
-                    body: message.text,
-                    icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">🍺</text></svg>'
+            // Setup private messages listener
+            const chatId = [currentUser.id, currentPrivateChat.id].sort().join('_');
+            database.ref('privateMessages')
+                .orderByChild('chatId')
+                .equalTo(chatId)
+                .limitToLast(50)
+                .on('child_added', function(snapshot) {
+                    const message = snapshot.val();
+                    displayMessage(message);
                 });
-            } else if (Notification.permission === 'default') {
-                Notification.requestPermission();
-            }
         }
-
-        // Event listeners
-        document.getElementById('messageInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                sendMessage();
-            }
-        });
-
-        document.getElementById('privateInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                sendPrivateMessage();
-            }
-        });
-
-        document.getElementById('usernameInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                joinChat();
-            }
-        });
-
-        // Initialize app
-        window.addEventListener('load', () => {
-            if (initFirebase()) {
-                console.log('App initialized successfully');
-            } else {
-                document.getElementById('loading').innerHTML = '<div>⚠️ שגיאה בהתחברות לשרת</div>';
-            }
-        });
-
-        // Handle page refresh/close
-        window.addEventListener('beforeunload', () => {
-            if (currentUser && usersRef) {
-                usersRef.child(currentUser.id).remove();
-            }
-        });
+        
+        // Exit private chat
+        function exitPrivateChat() {
+            currentPrivateChat = null;
+            
+            // Clear messages
+            messagesDiv.innerHTML = '';
+            
+            // Update UI
+            privateChatHeader.classList.add('hidden');
+            chatHeader.classList.remove('hidden');
+            
+            // Remove private messages listener
+            database.ref('privateMessages').off();
+            
+            // Reload public messages
+            lastMessageTime = 0;
+            setupMessageListener();
+        }
+        
+        // Toggle users sidebar
+        function toggleUsers() {
+            usersSidebar.classList.toggle('open');
+        }
+        
+        // Start the app
+        init();
     </script>
 </body>
 </html>
