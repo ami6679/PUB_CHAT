@@ -494,7 +494,7 @@
 
     <!-- Main App -->
     <div class="header">
-        <div class="pub-name">🍺 פאב צ'אט <span style="font-size: 12px; opacity: 0.7;">v1.2.0</span></div>
+        <div class="pub-name">🍺 פאב צ'אט <span style="font-size: 12px; opacity: 0.7;">v1.2.1</span></div>
         <div class="online-count" id="onlineCount">מתחבר...</div>
     </div>
     
@@ -773,8 +773,6 @@
                     buttonArea.innerHTML = `<button onclick="blockUser('${userId}', '${userName}')" style="background: #dc3545; color: white; border: none; padding: 8px 15px; border-radius: 5px; font-size: 14px; margin: 5px; cursor: pointer;">חסום משתמש</button>`;
                 }
                 
-                alert(`ביטלת את החסימה של ${userName}`);
-                
                 console.log('User unblocked successfully');
                 
             } catch (error) {
@@ -1042,29 +1040,45 @@
             
             if (!text || !currentPrivateChat || !currentUser) return;
             
-            // Check if recipient is blocked
+            // Check if recipient is blocked (I blocked them)
             if (blockedUsers.has(currentPrivateChat.id)) {
                 alert('לא ניתן לשלוח הודעה למשתמש חסום');
                 return;
             }
             
-            const chatId = [currentUser.id, currentPrivateChat.id].sort().join('_');
-            const message = {
-                id: Date.now() + '_' + Math.floor(Math.random() * 10000),
-                text: text,
-                sender: currentUser.name,
-                senderId: currentUser.id,
-                recipient: currentPrivateChat.name,
-                recipientId: currentPrivateChat.id,
-                timestamp: Date.now(),
-                chatId: chatId
-            };
-            
-            privateMessagesRef.child(chatId).push(message);
-            input.value = '';
+            // Check if I'm blocked by the recipient - we'll check this via Firebase
+            blockedUsersRef.child(currentPrivateChat.id).child(currentUser.id).once('value', (snapshot) => {
+                if (snapshot.exists()) {
+                    // I'm blocked by the recipient
+                    alert('לא ניתן לשלוח הודעה - המשתמש חסם אותך');
+                    return;
+                }
+                
+                // Send the message
+                const chatId = [currentUser.id, currentPrivateChat.id].sort().join('_');
+                const message = {
+                    id: Date.now() + '_' + Math.floor(Math.random() * 10000),
+                    text: text,
+                    sender: currentUser.name,
+                    senderId: currentUser.id,
+                    recipient: currentPrivateChat.name,
+                    recipientId: currentPrivateChat.id,
+                    timestamp: Date.now(),
+                    chatId: chatId
+                };
+                
+                privateMessagesRef.child(chatId).push(message);
+                input.value = '';
+            });
         }
 
         function displayPrivateMessage(message) {
+            // Skip messages from blocked users
+            if (blockedUsers.has(message.senderId)) {
+                console.log('Blocked message from:', message.sender);
+                return;
+            }
+            
             const messagesContainer = document.getElementById('privateMessages');
             const messageDiv = document.createElement('div');
             
@@ -1110,6 +1124,12 @@
         }
 
         function showPrivateMessageNotification(message) {
+            // Skip notifications from blocked users
+            if (blockedUsers.has(message.senderId)) {
+                console.log('Blocked notification from:', message.sender);
+                return;
+            }
+            
             // Visual notification in app
             const notificationDiv = document.createElement('div');
             notificationDiv.style.cssText = `
