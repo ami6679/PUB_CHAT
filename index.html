@@ -494,7 +494,7 @@
 
     <!-- Main App -->
     <div class="header">
-        <div class="pub-name">🍺 פאב צ'אט</div>
+        <div class="pub-name">🍺 פאב צ'אט <span style="font-size: 12px; opacity: 0.7;">v1.2.0</span></div>
         <div class="online-count" id="onlineCount">מתחבר...</div>
     </div>
     
@@ -743,8 +743,6 @@
                     buttonArea.innerHTML = `<button onclick="unblockUser('${userId}', '${userName}')" style="background: #28a745; color: white; border: none; padding: 8px 15px; border-radius: 5px; font-size: 14px; margin: 5px; cursor: pointer;">בטל חסימה</button>`;
                 }
                 
-                alert(`חסמת את ${userName}`);
-                
                 console.log('User blocked successfully');
                 
             } catch (error) {
@@ -768,8 +766,12 @@
                 // Remove from local blockedUsers set
                 blockedUsers.delete(userId);
                 
-                // Update the private chat to show block button
-                updatePrivateChatButtons(userId, userName, false);
+                // Update the button directly
+                const privateMessages = document.getElementById('privateMessages');
+                const buttonArea = privateMessages.children[1]; // Second child is the button area
+                if (buttonArea) {
+                    buttonArea.innerHTML = `<button onclick="blockUser('${userId}', '${userName}')" style="background: #dc3545; color: white; border: none; padding: 8px 15px; border-radius: 5px; font-size: 14px; margin: 5px; cursor: pointer;">חסום משתמש</button>`;
+                }
                 
                 alert(`ביטלת את החסימה של ${userName}`);
                 
@@ -781,17 +783,35 @@
             }
         }
 
-        function updatePrivateChatButtons(userId, userName, isBlocked) {
-            // Update the buttons in the private chat without closing it
-            const buttonHTML = isBlocked ? 
-                `<button onclick="unblockUser('${userId}', '${userName}')" style="background: #28a745; color: white; border: none; padding: 8px 15px; border-radius: 5px; font-size: 14px; margin: 5px; cursor: pointer;">בטל חסימה</button>` :
-                `<button onclick="blockUser('${userId}', '${userName}')" style="background: #dc3545; color: white; border: none; padding: 8px 15px; border-radius: 5px; font-size: 14px; margin: 5px; cursor: pointer;">חסום משתמש</button>`;
+        function unblockUser(userId, userName) {
+            if (!currentUser) return;
             
-            // Find and update the button area
-            const privateMessages = document.getElementById('privateMessages');
-            const buttonArea = privateMessages.querySelector('div[style*="border-bottom"]');
-            if (buttonArea) {
-                buttonArea.innerHTML = buttonHTML;
+            console.log('Unblocking user:', userId, userName);
+            
+            try {
+                // Remove from my blocked list
+                blockedUsersRef.child(currentUser.id).child(userId).remove();
+                
+                // Remove me from their blocked list
+                blockedUsersRef.child(userId).child(currentUser.id).remove();
+                
+                // Remove from local blockedUsers set
+                blockedUsers.delete(userId);
+                
+                // Update the button directly
+                const privateMessages = document.getElementById('privateMessages');
+                const buttonArea = privateMessages.children[1]; // Second child is the button area
+                if (buttonArea) {
+                    buttonArea.innerHTML = `<button onclick="blockUser('${userId}', '${userName}')" style="background: #dc3545; color: white; border: none; padding: 8px 15px; border-radius: 5px; font-size: 14px; margin: 5px; cursor: pointer;">חסום משתמש</button>`;
+                }
+                
+                alert(`ביטלת את החסימה של ${userName}`);
+                
+                console.log('User unblocked successfully');
+                
+            } catch (error) {
+                console.error('Error unblocking user:', error);
+                alert('שגיאה בביטול החסימה');
             }
         }
 
