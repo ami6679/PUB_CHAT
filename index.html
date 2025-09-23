@@ -851,3 +851,385 @@
             if (!currentUser) return;
             
             console.log('Unblocking user:', userId, userName);
+            
+            try {
+                // Remove from my blocked list
+                blockedUsersRef.child(currentUser.id).child(userId).remove();
+                
+                // Remove me from their blocked list
+                blockedUsersRef.child(userId).child(currentUser.id).remove();
+                
+                // Remove from local blockedUsers set
+                blockedUsers.delete(userId);
+                
+                // Update the button directly
+                const privateMessages = document.getElementById('privateMessages');
+                const buttonArea = privateMessages.children[1]; // Second child is the button area
+                if (buttonArea) {
+                    buttonArea.innerHTML = `<button onclick="blockUser('${userId}', '${userName}')" style="background: #dc3545; color: white; border: none; padding: 8px 15px; border-radius: 5px; font-size: 14px; margin: 5px; cursor: pointer;">חסום משתמש</button>`;
+                }
+                
+                console.log('User unblocked successfully');
+                
+            } catch (error) {
+                console.error('Error unblocking user:', error);
+                alert('שגיאה בביטול החסימה');
+            }
+        }
+
+        function setupListeners() {
+            // Listen to messages
+            messagesRef.on('child_added', (snapshot) => {
+                const message = snapshot.val();
+                displayMessage(message);
+            });
+            
+            // Listen to users
+            usersRef.on('value', (snapshot) => {
+                const users = snapshot.val() || {};
+                updateUsersList(users);
+            });
+            
+            // Listen to ALL private messages to detect new ones for current user
+            privateMessagesRef.on('child_added', (snapshot) => {
+                const chatData = snapshot.val();
+                const chatId = snapshot.key;
+                
+                // Check if this chat involves current user
+                if (chatId && chatId.includes(currentUser.id)) {
+                    // Listen to new messages in this specific chat
+                    privateMessagesRef.child(chatId).on('child_added', (messageSnapshot) => {
+                        const message = messageSnapshot.val();
+                        
+                        // If message is for me and I didn't send it
+                        if (message && message.recipientId === currentUser.id && message.senderId !== currentUser.id) {
+                            // Skip if sender is blocked
+                            if (blockedUsers.has(message.senderId)) return;
+                            
+                            // Check if this is a NEW message (not processed before)
+                            const messageKey = `${chatId}_${message.id}`;
+                            if (!processedMessages.has(messageKey)) {
+                                processedMessages.add(messageKey);
+                                
+                                // Show notification only if private chat is not open with this person
+                                if (!currentPrivateChat || currentPrivateChat.id !== message.senderId) {
+                                    showPrivateMessageNotification(message);
+                                }
+                            }
+                        }
+                    });
+                }
+            });
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const text = input.value.trim();
+            
+            if (!text || !currentUser) return;
+            
+            const message = {
+                id: Date.now() + '_' + Math.floor(Math.random() * 10000),
+                text: text,
+                sender: currentUser.name,
+                senderId: currentUser.id,
+                timestamp: Date.now(),
+                type: 'public'
+            };
+            
+            messagesRef.push(message);
+            input.value = '';
+        }
+
+        function displayMessage(message) {
+            const messagesContainer = document.getElementById('messages');
+            const messageDiv = document.createElement('div');
+            
+            const isOwn = message.senderId === currentUser?.id;
+            messageDiv.className = `message ${isOwn ? 'sent' : 'received'}`;
+            
+            let messageHTML = '';
+            if (!isOwn && message.type !== 'system') {
+                messageHTML += `<div class="message-header" onclick="openPrivateChat('${message.sender}', '${message.senderId}')">${message.sender}</div>`;
+            }
+            messageHTML += `<div style="margin-bottom: 15px;">${escapeHtml(message.text)}</div>`;
+            messageHTML += `<div class="message-time">${formatTime(message.timestamp)}</div>`;
+            
+            messageDiv.innerHTML = messageHTML;
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function updateUsersList(users) {
+            const usersContainer = document.getElementById('usersOnline');
+            const userCount = Object.keys(users).length;
+            
+            document.getElementById('onlineCount').textContent = `${userCount} ${userCount === 1 ? 'אדם מחובר' : 'אנשים מחוברים'}`;
+            
+            usersContainer.innerHTML = '';
+            
+            Object.values(users).forEach(user => {
+                // Show all users, but mark blocked ones differently
+                const isBlocked = blockedUsers.has(user.id);
+                const userCard = document.createElement('div');
+                userCard.className = `user-card ${user.id === currentUser?.id ? 'current-user' : ''} ${isBlocked ? 'blocked' : ''}`;
+                
+                // Photo or placeholder
+                let photoHTML = '';
+                if (user.photoURL) {
+                    const ownerClass = user.isOwner ? 'owner' : '';
+                    photoHTML = `<img src="${user.photoURL}" class="user-card-photo ${ownerClass}" alt="פרופיל">`;
+                } else {
+                    const initial = user.name.charAt(0).toUpperCase();
+                    const ownerClass = user.isOwner ? 'owner' : '';
+                    photoHTML = `<div class="no-photo-placeholder ${ownerClass}">${initial}</div>`;
+                }
+                
+                // Status display
+                let statusHTML = '';
+                if (user.status) {
+                    statusHTML = `<div class="user-card-status">${user.status}</div>`;
+                }
+                
+                // Owner indicator and name styling
+                const nameClass = user.isOwner ? 'owner' : '';
+                const ownerTag = user.isOwner ? ' 👑' : '';
+                
+                // Blocked indicator
+                const blockedHTML = isBlocked ? `<div class="blocked-indicator">🚫 חסום</div>` : '';
+                
+                userCard.innerHTML = `
+                    ${photoHTML}
+                    <div class="user-card-name ${nameClass}">${user.name}${ownerTag}</div>
+                    ${statusHTML}
+                    ${blockedHTML}
+                `;
+                
+                if (user.id !== currentUser?.id) {
+                    userCard.onclick = () => openPrivateChat(user.name, user.id);
+                }
+                
+                usersContainer.appendChild(userCard);
+            });
+        }
+
+        function openPrivateChat(userName, userId) {
+            if (userId === currentUser?.id) return;
+            
+            currentPrivateChat = { name: userName, id: userId };
+            
+            document.getElementById('privateChatName').textContent = `צ'אט פרטי עם ${userName}`;
+            document.getElementById('privateChat').classList.add('show');
+            
+            // Check if user is blocked to show appropriate button
+            const isBlocked = blockedUsers.has(userId);
+            const blockButtonHTML = isBlocked ? 
+                `<button onclick="unblockUser('${userId}', '${userName}')" style="background: #28a745; color: white; border: none; padding: 8px 15px; border-radius: 5px; font-size: 14px; margin: 5px; cursor: pointer;">בטל חסימה</button>` :
+                `<button onclick="blockUser('${userId}', '${userName}')" style="background: #dc3545; color: white; border: none; padding: 8px 15px; border-radius: 5px; font-size: 14px; margin: 5px; cursor: pointer;">חסום משתמש</button>`;
+            
+            // Clear previous messages and add block button
+            const welcomeMessage = isBlocked ? 
+                `<div class="join-message">🚫 צ'אט פרטי עם ${userName} (חסום)</div>` :
+                `<div class="join-message">💬 התחלת צ'אט פרטי עם ${userName}</div>`;
+            
+            document.getElementById('privateMessages').innerHTML = `
+                ${welcomeMessage}
+                <div style="text-align: center; padding: 15px; border-bottom: 1px solid #ddd; background: #f8f9fa;">
+                    ${blockButtonHTML}
+                </div>
+            `;
+            
+            // Listen to private messages for this chat
+            const chatId = [currentUser.id, userId].sort().join('_');
+            const privateChatRef = privateMessagesRef.child(chatId);
+            
+            privateChatRef.off(); // Remove previous listeners
+            privateChatRef.on('child_added', (snapshot) => {
+                const message = snapshot.val();
+                displayPrivateMessage(message);
+            });
+        }
+
+        function closePrivateChat() {
+            document.getElementById('privateChat').classList.remove('show');
+            currentPrivateChat = null;
+        }
+
+        function sendPrivateMessage() {
+            const input = document.getElementById('privateInput');
+            const text = input.value.trim();
+            
+            if (!text || !currentPrivateChat || !currentUser) return;
+            
+            // Check if recipient is blocked (I blocked them)
+            if (blockedUsers.has(currentPrivateChat.id)) {
+                alert('לא ניתן לשלוח הודעה למשתמש חסום');
+                return;
+            }
+            
+            // Check if I'm blocked by the recipient - we'll check this via Firebase
+            blockedUsersRef.child(currentPrivateChat.id).child(currentUser.id).once('value', (snapshot) => {
+                if (snapshot.exists()) {
+                    // I'm blocked by the recipient
+                    alert('לא ניתן לשלוח הודעה - המשתמש חסם אותך');
+                    return;
+                }
+                
+                // Send the message
+                const chatId = [currentUser.id, currentPrivateChat.id].sort().join('_');
+                const message = {
+                    id: Date.now() + '_' + Math.floor(Math.random() * 10000),
+                    text: text,
+                    sender: currentUser.name,
+                    senderId: currentUser.id,
+                    recipient: currentPrivateChat.name,
+                    recipientId: currentPrivateChat.id,
+                    timestamp: Date.now(),
+                    chatId: chatId
+                };
+                
+                privateMessagesRef.child(chatId).push(message);
+                input.value = '';
+            });
+        }
+
+        function displayPrivateMessage(message) {
+            // Skip messages from blocked users
+            if (blockedUsers.has(message.senderId)) {
+                console.log('Blocked message from:', message.sender);
+                return;
+            }
+            
+            const messagesContainer = document.getElementById('privateMessages');
+            const messageDiv = document.createElement('div');
+            
+            const isOwn = message.senderId === currentUser?.id;
+            messageDiv.className = `message ${isOwn ? 'sent' : 'received'}`;
+            
+            let messageHTML = '';
+            if (!isOwn) {
+                messageHTML += `<div class="message-header">${message.sender}</div>`;
+            }
+            messageHTML += `<div style="margin-bottom: 15px;">${escapeHtml(message.text)}</div>`;
+            messageHTML += `<div class="message-time">${formatTime(message.timestamp)}</div>`;
+            
+            messageDiv.innerHTML = messageHTML;
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function addSystemMessage(text) {
+            const message = {
+                id: Date.now() + '_system',
+                text: text,
+                sender: 'System',
+                senderId: 'system',
+                timestamp: Date.now(),
+                type: 'system'
+            };
+            
+            messagesRef.push(message);
+        }
+
+        function formatTime(timestamp) {
+            const date = new Date(timestamp);
+            const hours = date.getHours().toString().padStart(2, '0');
+            const minutes = date.getMinutes().toString().padStart(2, '0');
+            return `${hours}:${minutes}`;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function showPrivateMessageNotification(message) {
+            // Skip notifications from blocked users
+            if (blockedUsers.has(message.senderId)) {
+                console.log('Blocked notification from:', message.sender);
+                return;
+            }
+            
+            // Visual notification in app
+            const notificationDiv = document.createElement('div');
+            notificationDiv.style.cssText = `
+                position: fixed;
+                top: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: #ff4444;
+                color: white;
+                padding: 12px 20px;
+                border-radius: 8px;
+                z-index: 10000;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                font-size: 14px;
+                cursor: pointer;
+                animation: slideDown 0.3s ease-out;
+            `;
+            notificationDiv.innerHTML = `💬 ${message.sender}: ${escapeHtml(message.text)}`;
+            
+            // Click to open private chat
+            notificationDiv.onclick = () => {
+                openPrivateChat(message.sender, message.senderId);
+                document.body.removeChild(notificationDiv);
+            };
+            
+            document.body.appendChild(notificationDiv);
+            
+            // Remove after 5 seconds
+            setTimeout(() => {
+                if (document.body.contains(notificationDiv)) {
+                    document.body.removeChild(notificationDiv);
+                }
+            }, 5000);
+            
+            // Browser notification (if permission granted)
+            if (Notification.permission === 'granted') {
+                new Notification(`הודעה פרטית מ${message.sender}`, {
+                    body: message.text,
+                    icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">🍺</text></svg>'
+                });
+            } else if (Notification.permission === 'default') {
+                Notification.requestPermission();
+            }
+        }
+
+        // Event listeners
+        document.getElementById('messageInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        document.getElementById('privateInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendPrivateMessage();
+            }
+        });
+
+        document.getElementById('usernameInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                joinChat();
+            }
+        });
+
+        // Initialize app
+        window.addEventListener('load', () => {
+            if (initFirebase()) {
+                console.log('App initialized successfully');
+            } else {
+                document.getElementById('loading').innerHTML = '<div>⚠️ שגיאה בהתחברות לשרת</div>';
+            }
+        });
+
+        // Handle page refresh/close
+        window.addEventListener('beforeunload', () => {
+            if (currentUser && usersRef) {
+                usersRef.child(currentUser.id).remove();
+            }
+        });
+    </script>
+</body>
+</html>
