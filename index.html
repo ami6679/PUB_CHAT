@@ -511,7 +511,7 @@
 
     <!-- Main App -->
     <div class="header">
-        <div class="pub-name">🍺 פאב צ'אט <span style="font-size: 12px; opacity: 0.7;">v1.2.7</span></div>
+        <div class="pub-name">🍺 פאב צ'אט <span style="font-size: 12px; opacity: 0.7;">v1.2.8</span></div>
         <div class="online-count" id="onlineCount">מתחבר...</div>
     </div>
     
@@ -753,12 +753,13 @@
                 // Add to local blockedUsers set
                 blockedUsers.add(userId);
                 
-                // Update the button directly
-                const privateMessages = document.getElementById('privateMessages');
-                const buttonArea = privateMessages.querySelector('div[style*="text-align: center"]');
-                if (buttonArea) {
-                    buttonArea.innerHTML = `<button onclick="unblockUser('${userId}', '${userName}')" style="background: #28a745; color: white; border: none; padding: 8px 15px; border-radius: 5px; font-size: 14px; margin: 5px; cursor: pointer;">בטל חסימה</button>`;
-                }
+                // Close and reopen the private chat to refresh the button
+                const chatName = currentPrivateChat.name;
+                const chatId = currentPrivateChat.id;
+                closePrivateChat();
+                setTimeout(() => {
+                    openPrivateChat(chatName, chatId);
+                }, 100);
                 
                 console.log('User blocked successfully');
                 
@@ -783,12 +784,13 @@
                 // Remove from local blockedUsers set
                 blockedUsers.delete(userId);
                 
-                // Update the button directly
-                const privateMessages = document.getElementById('privateMessages');
-                const buttonArea = privateMessages.querySelector('div[style*="text-align: center"]');
-                if (buttonArea) {
-                    buttonArea.innerHTML = `<button onclick="blockUser('${userId}', '${userName}')" style="background: #dc3545; color: white; border: none; padding: 8px 15px; border-radius: 5px; font-size: 14px; margin: 5px; cursor: pointer;">חסום משתמש</button>`;
-                }
+                // Close and reopen the private chat to refresh the button
+                const chatName = currentPrivateChat.name;
+                const chatId = currentPrivateChat.id;
+                closePrivateChat();
+                setTimeout(() => {
+                    openPrivateChat(chatName, chatId);
+                }, 100);
                 
                 console.log('User unblocked successfully');
                 
