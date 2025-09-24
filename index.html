@@ -496,29 +496,66 @@
         }
         
         .modal-content {
-            background: rgba(255, 255, 255, 0.95); /* Slightly transparent white for depth */
-            backdrop-filter: blur(10px); /* Glass effect */
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            /* Changed from white background to deep blue theme */
+            background: linear-gradient(135deg, #0A1A3F 0%, #1e3c72 100%);
+            border: 2px solid rgba(110, 193, 228, 0.3); /* Turquoise border accent */
             padding: 30px;
-            border-radius: 20px; /* More rounded for modern look */
+            border-radius: 20px;
             text-align: center;
             max-width: 400px;
             width: 90%;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.1); /* Enhanced shadow with border */
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6), 0 0 0 1px rgba(110, 193, 228, 0.2);
         }
         
         .modal-content h2 {
             margin-bottom: 15px;
-            color: #0A1A3F; /* Dark blue to match background theme */
-            font-weight: 700; /* Bolder for Inter font */
+            /* Changed to white text for visibility on dark background */
+            color: white;
+            font-weight: 700;
             font-size: 24px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3); /* Added shadow for better readability */
         }
         
         .modal-content p {
             margin-bottom: 25px;
-            color: #4a5568; /* Softer gray for subtitle */
+            /* Changed to light turquoise for subtitle */
+            color: #6EC1E4;
             font-size: 16px;
             font-weight: 400;
+        }
+        
+        .modal-content input, .modal-content select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid rgba(110, 193, 228, 0.5); /* Turquoise border */
+            border-radius: 8px;
+            font-size: 16px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-family: 'Inter', sans-serif;
+            /* Dark background with light text for inputs */
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            backdrop-filter: blur(10px);
+        }
+        
+        /* Input placeholder styling for dark theme */
+        .modal-content input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        /* Focus states for inputs */
+        .modal-content input:focus, .modal-content select:focus {
+            outline: none;
+            border-color: #6EC1E4;
+            background: rgba(255, 255, 255, 0.25);
+            box-shadow: 0 0 0 3px rgba(110, 193, 228, 0.3);
+        }
+        
+        /* Select dropdown styling */
+        .modal-content select option {
+            background: #1e3c72;
+            color: white;
         }
         
         .modal-content input, .modal-content select {
@@ -548,19 +585,28 @@
         }
         
         .upload-btn {
-            background: #f0f0f0;
-            border: 2px dashed #075e54;
+            /* Updated for dark theme */
+            background: rgba(255, 255, 255, 0.15);
+            border: 2px dashed #6EC1E4; /* Turquoise dashed border */
+            backdrop-filter: blur(10px);
             padding: 20px;
             border-radius: 10px;
             cursor: pointer;
-            color: #075e54;
+            color: #6EC1E4; /* Turquoise text */
             font-size: 14px;
+            font-weight: 500;
             transition: all 0.3s ease;
         }
         
         .upload-btn:hover {
-            background: #e8f5f3;
+            background: rgba(110, 193, 228, 0.2);
+            color: white;
             transform: translateY(-1px);
+            border-color: white;
+        }
+        
+        .upload-btn small {
+            color: rgba(255, 255, 255, 0.8);
         }
         
         #photoInput, #fileInput {
@@ -642,7 +688,7 @@
 
     <!-- Main App -->
     <div class="header">
-        <div class="pub-name">🍺 פאב צ'אט <span style="font-size: 12px; opacity: 0.7;">v1.3.4</span></div>
+        <div class="pub-name">🍺 פאב צ'אט <span style="font-size: 12px; opacity: 0.7;">v1.3.5</span></div>
         <div class="online-count" id="onlineCount">מתחבר...</div>
     </div>
     
