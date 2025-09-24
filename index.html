@@ -4,6 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>פאב צ'אט</title>
+    
+    <!-- Import Google Fonts - Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
     <style>
         * {
             margin: 0;
@@ -12,8 +18,10 @@
         }
         
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
-            background: #f0f0f0;
+            /* Updated font family to Inter */
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            /* Updated background color to deep blue */
+            background: #0A1A3F;
             height: 100vh;
             display: flex;
             flex-direction: column;
@@ -48,7 +56,7 @@
         
         .pub-name {
             font-size: 18px;
-            font-weight: bold;
+            font-weight: 600; /* Updated weight for Inter */
             margin-bottom: 5px;
         }
         
@@ -96,7 +104,7 @@
         
         .message-header {
             font-size: 12px;
-            font-weight: bold;
+            font-weight: 600; /* Updated weight for Inter */
             color: #075e54;
             margin-bottom: 3px;
             cursor: pointer;
@@ -135,6 +143,7 @@
             padding: 10px 15px;
             font-size: 16px;
             outline: none;
+            font-family: 'Inter', sans-serif; /* Ensure input uses Inter font */
         }
         
         .send-button {
@@ -213,7 +222,7 @@
         .blocked-indicator {
             color: #f44336;
             font-size: 12px;
-            font-weight: bold;
+            font-weight: 600; /* Updated weight for Inter */
         }
         
         .user-card-photo {
@@ -242,7 +251,7 @@
             justify-content: center;
             margin: 0 auto 8px;
             font-size: 18px;
-            font-weight: bold;
+            font-weight: 600; /* Updated weight for Inter */
             border: 2px solid #075e54;
         }
         
@@ -346,6 +355,7 @@
             padding: 8px 12px;
             font-size: 14px;
             outline: none;
+            font-family: 'Inter', sans-serif; /* Ensure input uses Inter font */
         }
         
         .private-send {
@@ -382,25 +392,28 @@
         .modal-content {
             background: white;
             padding: 30px;
-            border-radius: 10px;
+            border-radius: 15px; /* Slightly more rounded corners */
             text-align: center;
             max-width: 400px;
             width: 90%;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2); /* Enhanced shadow for better depth */
         }
         
         .modal-content h2 {
             margin-bottom: 20px;
             color: #075e54;
+            font-weight: 600; /* Updated weight for Inter */
         }
         
         .modal-content input, .modal-content select {
             width: 100%;
             padding: 12px;
             border: 1px solid #ddd;
-            border-radius: 5px;
+            border-radius: 8px; /* More rounded input fields */
             font-size: 16px;
             margin-bottom: 20px;
             text-align: center;
+            font-family: 'Inter', sans-serif; /* Ensure inputs use Inter font */
         }
         
         .photo-upload {
@@ -426,10 +439,12 @@
             cursor: pointer;
             color: #075e54;
             font-size: 14px;
+            transition: all 0.3s ease; /* Smooth transition */
         }
         
         .upload-btn:hover {
             background: #e8f5f3;
+            transform: translateY(-1px); /* Subtle lift effect */
         }
         
         #photoInput {
@@ -454,18 +469,36 @@
             vertical-align: middle;
         }
         
+        /* Updated join button with new styling */
         .modal-content button {
-            background: #075e54;
-            color: white;
+            background: #6EC1E4; /* Changed to turquoise color */
+            color: #1a1a1a; /* Dark text for readability */
             border: none;
-            padding: 12px 30px;
-            border-radius: 5px;
+            padding: 14px 32px; /* Slightly larger padding */
+            border-radius: 12px; /* Rounded corners as requested */
             font-size: 16px;
+            font-weight: 600; /* Semi-bold for better visibility */
             cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease; /* Smooth transitions */
+            box-shadow: 0 4px 8px rgba(110, 193, 228, 0.3); /* Subtle shadow with button color */
+        }
+        
+        /* Hover effect for the join button */
+        .modal-content button:hover {
+            background: #5BB1D1; /* Slightly darker on hover */
+            transform: translateY(-2px); /* Lift effect */
+            box-shadow: 0 6px 12px rgba(110, 193, 228, 0.4); /* Enhanced shadow */
+        }
+        
+        /* Active state for button */
+        .modal-content button:active {
+            transform: translateY(0); /* Return to normal position when clicked */
+            box-shadow: 0 2px 4px rgba(110, 193, 228, 0.3);
         }
 
         .user-card-name {
-            font-weight: bold;
+            font-weight: 600; /* Updated weight for Inter */
             margin-bottom: 4px;
             color: #075e54;
         }
@@ -515,9 +548,9 @@
             
             <input type="text" id="usernameInput" placeholder="השם שלך..." maxlength="20">
             
-            <input type="password" id="ownerPassword" placeholder="סיסמת OWNER (אופציונלי)" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; font-size: 16px; margin-bottom: 10px; text-align: center;">
+            <input type="password" id="ownerPassword" placeholder="סיסמת OWNER (אופציונלי)" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; margin-bottom: 10px; text-align: center; font-family: 'Inter', sans-serif;">
             
-            <select id="statusSelect" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; font-size: 16px; margin-bottom: 20px; text-align: center;">
+            <select id="statusSelect" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; margin-bottom: 20px; text-align: center; font-family: 'Inter', sans-serif;">
                 <option value="">בחר סטטוס (אופציונלי)</option>
                 <option value="פנוי">פנוי</option>
                 <option value="תפוס">תפוס</option>
@@ -531,7 +564,7 @@
 
     <!-- Main App -->
     <div class="header">
-        <div class="pub-name">🍺 פאב צ'אט <span style="font-size: 12px; opacity: 0.7;">v1.3.1</span></div>
+        <div class="pub-name">🍺 פאב צ'אט <span style="font-size: 12px; opacity: 0.7;">v1.3.2</span></div>
         <div class="online-count" id="onlineCount">מתחבר...</div>
     </div>
     
@@ -1167,6 +1200,7 @@
                 font-size: 14px;
                 cursor: pointer;
                 animation: slideDown 0.3s ease-out;
+                font-family: 'Inter', sans-serif;
             `;
             notificationDiv.innerHTML = `💬 ${message.sender}: ${escapeHtml(message.text)}`;
             
