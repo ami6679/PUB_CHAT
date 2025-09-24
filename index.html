@@ -631,7 +631,7 @@
 
     <!-- Main App -->
     <div class="header">
-        <div class="pub-name">🍺 פאב צ'אט <span style="font-size: 12px; opacity: 0.7;">v1.3.3</span></div>
+        <div class="pub-name">🍺 פאב צ'אט <span style="font-size: 12px; opacity: 0.7;">v1.3.4</span></div>
         <div class="online-count" id="onlineCount">מתחבר...</div>
     </div>
     
@@ -1057,7 +1057,7 @@
 
         // Setup listeners
         function setupListeners() {
-            // Listen to lobby messages
+            // Listen to lobby messages - ALL USERS should see these
             lobbyMessagesRef.on('child_added', (snapshot) => {
                 const message = snapshot.val();
                 displayLobbyMessage(message);
