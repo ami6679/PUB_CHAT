@@ -1,4 +1,34 @@
-<!-- Full-screen mobile private chat -->
+async function uploadPhoto(file) {
+            if (!file) return null;
+            
+            try {
+                console.log('Starting photo upload...');
+                
+                // Check if Firebase and storage are properly initialized
+                if (!storage) {
+                    console.error('Firebase storage not initialized');
+                    alert('שירות העלאת תמונות לא זמין כרגע. תוכל להמשיך בלי תמונה.');
+                    return null;
+                }
+                
+                const filename = `profile_${Date.now()}_${Math.random().toString(36).substring(7)}.jpg`;
+                const storageRef = storage.ref(`profile-photos/${filename}`);
+                
+                console.log('Uploading to:', filename);
+                
+                const uploadTask = await storageRef.put(file);
+                console.log('Upload completed');
+                
+                const downloadURL = await uploadTask.ref.getDownloadURL();
+                console.log('Download URL obtained:', downloadURL);
+                
+                return downloadURL;
+            } catch (error) {
+                console.error('Error uploading photo:', error);
+                alert('שגיאה בהעלאת התמונה. תמשיך בלי תמונת פרופיל.');
+                return null;
+            }
+        }    <!-- Full-screen mobile private chat -->
     <div class="private-chat" id="privateChat">
         <div class="private-header">
             <div></div>
@@ -49,6 +79,9 @@
                 app = firebase.initializeApp(firebaseConfig);
                 database = firebase.database();
                 storage = firebase.storage();
+                
+                console.log('Firebase initialized successfully');
+                console.log('Storage available:', !!storage);
                 
                 // References
                 lobbyMessagesRef = database.ref('lobbyMessages');
@@ -372,9 +405,9 @@
             return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
         }
 
-        // Kick user function (owner only)
+        // Kick user function (owner only) - with safety checks
         function kickUser(userId, userName) {
-            if (!currentUser || !currentUser.isOwner || userId === currentUser.id) return;
+            if (!currentUser || typeof currentUser !== 'object' || currentUser.isOwner !== true || userId === currentUser.id) return;
             
             if (confirm(`האם אתה בטוח שברצונך להסיר את ${userName} מהאפליקציה?`)) {
                 usersRef.child(userId).remove();
@@ -718,44 +751,89 @@
             }
         }
 
-        // Event listeners
-        document.getElementById('ownerMessageInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                sendLobbyMessage();
-            }
-        });
-
-        document.getElementById('privateInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                sendPrivateMessage();
-            }
-        });
-
-        document.getElementById('usernameInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                joinChat();
-            }
-        });
-
-        // Mobile-specific event handlers
-        document.addEventListener('touchstart', function() {}, { passive: true });
-
-        // Prevent iOS bounce scrolling
-        document.addEventListener('touchmove', function(e) {
-            if (e.target.closest('.lobby-messages, .private-messages, .users-online')) {
-                return; // Allow scrolling in these containers
-            }
-            e.preventDefault();
-        }, { passive: false });
-
-        // Initialize app
+        // Initialize app with proper event listener setup
         window.addEventListener('load', () => {
             if (initFirebase()) {
                 console.log('App initialized successfully');
+                
+                // Setup event listeners after DOM is ready
+                setupEventListeners();
             } else {
                 document.getElementById('loading').innerHTML = '<div>⚠️ שגיאה בהתחברות לשרת</div>';
             }
         });
+
+        // Setup event listeners with safety checks
+        function setupEventListeners() {
+            const ownerMessageInput = document.getElementById('ownerMessageInput');
+            if (ownerMessageInput) {
+                ownerMessageInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        sendLobbyMessage();
+                    }
+                });
+            }
+
+            const privateInput = document.getElementById('privateInput');
+            if (privateInput) {
+                privateInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        sendPrivateMessage();
+                    }
+                });
+            }
+
+            const usernameInput = document.getElementById('usernameInput');
+            if (usernameInput) {
+                usernameInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        joinChat();
+                    }
+                });
+            }
+
+            // Mobile-specific event handlers
+            document.addEventListener('touchstart', function() {}, { passive: true });
+
+            // Prevent iOS bounce scrolling
+            document.addEventListener('touchmove', function(e) {
+                if (e.target.closest('.lobby-messages, .private-messages, .users-online')) {
+                    return; // Allow scrolling in these containers
+                }
+                e.preventDefault();
+            }, { passive: false });
+
+            // Prevent context menu on long press (mobile)
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+            });
+
+            // Handle device orientation changes
+            window.addEventListener('orientationchange', function() {
+                setTimeout(() => {
+                    // Scroll to bottom of lobby messages after orientation change
+                    const lobbyMessages = document.getElementById('lobbyMessages');
+                    if (lobbyMessages) {
+                        lobbyMessages.scrollTop = lobbyMessages.scrollHeight;
+                    }
+                    
+                    // Scroll to bottom of private messages if open
+                    const privateMessages = document.getElementById('privateMessages');
+                    if (privateMessages && currentPrivateChat) {
+                        privateMessages.scrollTop = privateMessages.scrollHeight;
+                    }
+                }, 100);
+            });
+
+            // Fix viewport height on mobile browsers
+            function setViewportHeight() {
+                const vh = window.innerHeight * 0.01;
+                document.documentElement.style.setProperty('--vh', `${vh}px`);
+            }
+            
+            setViewportHeight();
+            window.addEventListener('resize', setViewportHeight);
+        }
 
         // Handle page refresh/close
         window.addEventListener('beforeunload', () => {
@@ -763,37 +841,6 @@
                 usersRef.child(currentUser.id).remove();
             }
         });
-
-        // Prevent context menu on long press (mobile)
-        document.addEventListener('contextmenu', function(e) {
-            e.preventDefault();
-        });
-
-        // Handle device orientation changes
-        window.addEventListener('orientationchange', function() {
-            setTimeout(() => {
-                // Scroll to bottom of lobby messages after orientation change
-                const lobbyMessages = document.getElementById('lobbyMessages');
-                if (lobbyMessages) {
-                    lobbyMessages.scrollTop = lobbyMessages.scrollHeight;
-                }
-                
-                // Scroll to bottom of private messages if open
-                const privateMessages = document.getElementById('privateMessages');
-                if (privateMessages && currentPrivateChat) {
-                    privateMessages.scrollTop = privateMessages.scrollHeight;
-                }
-            }, 100);
-        });
-
-        // Fix viewport height on mobile browsers
-        function setViewportHeight() {
-            const vh = window.innerHeight * 0.01;
-            document.documentElement.style.setProperty('--vh', `${vh}px`);
-        }
-        
-        setViewportHeight();
-        window.addEventListener('resize', setViewportHeight);
     </script>
 </body>
 </html><!DOCTYPE html>
@@ -1660,7 +1707,7 @@
 
     <!-- Main App -->
     <div class="header">
-        <div class="pub-name">🍺 פאב צ'אט <span style="font-size: 12px; opacity: 0.7;">v1.4.1</span></div>
+        <div class="pub-name">🍺 פאב צ'אט <span style="font-size: 12px; opacity: 0.7;">v1.4.3</span></div>
         <div class="online-count" id="onlineCount">מתחבר...</div>
     </div>
     
