@@ -428,18 +428,19 @@
             usersGrid.className = 'users-grid';
             
             Object.values(users).forEach(user => {
-                const isBlocked = blockedUsers.has(user.id);
+                // Safe check for blocked users
+                const isBlocked = blockedUsers && blockedUsers.has ? blockedUsers.has(user.id) : false;
                 const userCard = document.createElement('div');
                 userCard.className = `user-card ${user.id === currentUser?.id ? 'current-user' : ''} ${isBlocked ? 'blocked' : ''}`;
                 
                 // Photo or placeholder
                 let photoHTML = '';
                 if (user.photoURL) {
-                    const ownerClass = user.isOwner ? 'owner' : '';
+                    const ownerClass = (user.isOwner === true) ? 'owner' : '';
                     photoHTML = `<img src="${user.photoURL}" class="user-card-photo ${ownerClass}" alt="פרופיל">`;
                 } else {
-                    const initial = user.name.charAt(0).toUpperCase();
-                    const ownerClass = user.isOwner ? 'owner' : '';
+                    const initial = user.name ? user.name.charAt(0).toUpperCase() : '?';
+                    const ownerClass = (user.isOwner === true) ? 'owner' : '';
                     photoHTML = `<div class="no-photo-placeholder ${ownerClass}">${initial}</div>`;
                 }
                 
@@ -450,13 +451,13 @@
                 }
                 
                 // Owner indicator
-                const nameClass = user.isOwner ? 'owner' : '';
-                const ownerTag = user.isOwner ? ' 👑' : '';
+                const nameClass = (user.isOwner === true) ? 'owner' : '';
+                const ownerTag = (user.isOwner === true) ? ' 👑' : '';
                 
                 // Kick button for owner (only show for other users)
                 let kickButtonHTML = '';
-                if (currentUser && currentUser.isOwner && user.id !== currentUser.id && !user.isOwner) {
-                    kickButtonHTML = `<button class="kick-button" onclick="kickUser('${user.id}', '${user.name}')" title="הסר משתמש">×</button>`;
+                if (currentUser && currentUser.isOwner === true && user.id !== currentUser.id && user.isOwner !== true) {
+                    kickButtonHTML = `<button class="kick-button" onclick="kickUser('${user.id}', '${escapeHtml(user.name)}')" title="הסר משתמש">×</button>`;
                 }
                 
                 // Blocked indicator
@@ -465,7 +466,7 @@
                 userCard.innerHTML = `
                     ${kickButtonHTML}
                     ${photoHTML}
-                    <div class="user-card-name ${nameClass}">${user.name}${ownerTag}</div>
+                    <div class="user-card-name ${nameClass}">${escapeHtml(user.name || 'משתמש')}${ownerTag}</div>
                     ${statusHTML}
                     ${blockedHTML}
                 `;
@@ -475,7 +476,7 @@
                     userCard.onclick = (e) => {
                         // Don't trigger if clicked on kick button
                         if (e.target.classList.contains('kick-button')) return;
-                        openPrivateChat(user.name, user.id);
+                        openPrivateChat(user.name || 'משתמש', user.id);
                     };
                 }
                 
@@ -1652,7 +1653,7 @@
 
     <!-- Main App -->
     <div class="header">
-        <div class="pub-name">🍺 פאב צ'אט <span style="font-size: 12px; opacity: 0.7;">v1.4.0</span></div>
+        <div class="pub-name">🍺 פאב צ'אט <span style="font-size: 12px; opacity: 0.7;">v1.4.1</span></div>
         <div class="online-count" id="onlineCount">מתחבר...</div>
     </div>
     
