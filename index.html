@@ -208,14 +208,21 @@
             }
         }
 
-        // Setup UI based on user permissions
+        // Setup UI based on user permissions - with safety checks
         function setupUI() {
+            // Safety check - ensure currentUser exists and has required properties
+            if (!currentUser || typeof currentUser !== 'object') {
+                console.error('setupUI called without valid currentUser');
+                return;
+            }
+            
             const ownerInputArea = document.getElementById('ownerInputArea');
             const viewerMessage = document.getElementById('viewerMessage');
             const ownerMessageInput = document.getElementById('ownerMessageInput');
             const ownerSendButton = document.getElementById('ownerSendButton');
             
-            if (currentUser.isOwner) {
+            // Check if user is owner with explicit boolean comparison
+            if (currentUser.isOwner === true) {
                 ownerInputArea.classList.add('show');
                 viewerMessage.style.display = 'none';
                 ownerMessageInput.disabled = false;
@@ -226,9 +233,9 @@
             }
         }
 
-        // Send lobby message (owner only)
+        // Send lobby message (owner only) - with safety checks
         function sendLobbyMessage() {
-            if (!currentUser || !currentUser.isOwner) return;
+            if (!currentUser || typeof currentUser !== 'object' || currentUser.isOwner !== true) return;
             
             const input = document.getElementById('ownerMessageInput');
             const text = input.value.trim();
@@ -253,9 +260,9 @@
             input.value = '';
         }
 
-        // Handle file upload for owner
+        // Handle file upload for owner - with safety checks
         function handleFileUpload(input) {
-            if (!currentUser || !currentUser.isOwner) return;
+            if (!currentUser || typeof currentUser !== 'object' || currentUser.isOwner !== true) return;
             
             if (input.files && input.files[0]) {
                 const file = input.files[0];
