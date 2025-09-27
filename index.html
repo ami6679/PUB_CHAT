@@ -867,7 +867,7 @@
                 
                 let kickButton = '';
                 if (currentUser && currentUser.isOwner && user.id !== currentUser.id && !user.isOwner) {
-                    kickButton = `<button class="kick-button" onclick="kickUser('${user.id}', '${escapeHtml(user.name)}')">×</button>`;
+                    kickButton = `<button class="kick-button" data-user-id="${user.id}" data-user-name="${escapeHtml(user.name)}">×</button>`;
                 }
                 
                 userCard.innerHTML = `
@@ -1065,3 +1065,4 @@
     </script>
 </body>
 </html>
+
