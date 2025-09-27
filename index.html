@@ -2,16 +2,8 @@
 <html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="#0A1A3F">
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>פאב צ'אט v1.4.4</title>
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
@@ -19,28 +11,14 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-        }
-        
-        input, textarea, .message-content, .owner-message {
-            -webkit-user-select: text;
-            -moz-user-select: text;
-            -ms-user-select: text;
-            user-select: text;
         }
         
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: 'Inter', sans-serif;
             background: #0A1A3F;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            overscroll-behavior: none;
-            touch-action: manipulation;
-            overflow-x: hidden;
         }
         
         .loading {
@@ -49,7 +27,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.7);
+            background: rgba(0,0,0,0.8);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -65,16 +43,13 @@
         .header {
             background: #075e54;
             color: white;
-            padding: 12px 16px;
+            padding: 16px;
             text-align: center;
             box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-            width: 100%;
-            flex-shrink: 0;
-            z-index: 100;
         }
         
         .pub-name {
-            font-size: 16px;
+            font-size: 18px;
             font-weight: 600;
             margin-bottom: 4px;
         }
@@ -86,89 +61,48 @@
 
         .users-online {
             background: rgba(7, 94, 84, 0.1);
-            padding: 12px;
+            padding: 16px;
             text-align: center;
-            font-size: 14px;
             color: #075e54;
             border-bottom: 1px solid #ddd;
             overflow-x: auto;
-            overflow-y: hidden;
-            white-space: nowrap;
-            scrollbar-width: none;
-            -ms-overflow-style: none;
-        }
-        
-        .users-online::-webkit-scrollbar {
-            display: none;
         }
         
         .users-grid {
             display: inline-flex;
-            gap: 12px;
+            gap: 16px;
             padding: 8px 0;
-            align-items: center;
         }
         
         .user-card {
             background: white;
             border: 1px solid #ddd;
             border-radius: 12px;
-            padding: 12px 8px;
+            padding: 16px;
             cursor: pointer;
             transition: all 0.2s;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            min-width: 90px;
+            min-width: 100px;
             text-align: center;
             position: relative;
-            flex-shrink: 0;
-            min-height: 44px;
         }
         
-        .user-card:hover, .user-card:active {
-            transform: translateY(-1px);
+        .user-card:hover {
+            transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(0,0,0,0.2);
         }
         
         .user-card.current-user {
+            background: #f0f0f0;
             cursor: default;
-            background: #f8f8f8;
         }
         
-        .user-card.current-user:hover {
-            transform: none;
-        }
-        
-        .user-card.blocked {
-            opacity: 0.5;
-            filter: grayscale(1);
-        }
-
-        .kick-button {
-            position: absolute;
-            top: 2px;
-            right: 2px;
-            background: #dc3545;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 28px;
-            height: 28px;
-            font-size: 14px;
-            cursor: pointer;
-            min-width: 44px;
-            min-height: 44px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
         .user-card-photo {
-            width: 36px;
-            height: 36px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
             object-fit: cover;
             margin: 0 auto 8px;
-            display: block;
             border: 2px solid #075e54;
         }
         
@@ -178,8 +112,8 @@
         }
         
         .no-photo-placeholder {
-            width: 36px;
-            height: 36px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
             background: #075e54;
             color: white;
@@ -187,24 +121,20 @@
             align-items: center;
             justify-content: center;
             margin: 0 auto 8px;
-            font-size: 16px;
+            font-size: 20px;
             font-weight: 600;
-            border: 2px solid #075e54;
         }
         
         .no-photo-placeholder.owner {
             background: #ffd700;
             color: #000;
-            border: 3px solid #ffd700;
-            box-shadow: 0 0 8px rgba(255, 215, 0, 0.4);
         }
 
         .user-card-name {
             font-weight: 600;
             margin-bottom: 4px;
             color: #075e54;
-            font-size: 12px;
-            line-height: 1.2;
+            font-size: 14px;
         }
         
         .user-card-name.owner {
@@ -213,7 +143,7 @@
         }
         
         .user-card-status {
-            font-size: 10px;
+            font-size: 12px;
             color: #666;
             font-style: italic;
         }
@@ -224,101 +154,73 @@
             flex-direction: column;
             background: #e5ddd5;
             overflow: hidden;
-            min-height: 0;
         }
         
         .lobby-messages {
             flex: 1;
-            padding: 16px 12px;
+            padding: 20px;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            -webkit-overflow-scrolling: touch;
-            overflow-x: hidden;
+            gap: 16px;
         }
         
         .owner-message {
             background: linear-gradient(135deg, #ffd700, #ffed4e);
             border: 2px solid #ffd700;
             border-radius: 16px;
-            padding: 16px;
+            padding: 20px;
             box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
-            animation: fadeIn 0.3s ease-in;
             position: relative;
-            word-wrap: break-word;
-            overflow-wrap: break-word;
         }
 
         .owner-message::before {
             content: "👑";
             position: absolute;
-            top: -8px;
-            left: 12px;
-            font-size: 18px;
+            top: -10px;
+            left: 15px;
+            font-size: 20px;
             background: white;
             border-radius: 50%;
-            width: 28px;
-            height: 28px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            padding: 5px;
         }
         
         .owner-message .message-header {
             font-weight: 700;
             color: #8B4513;
-            margin-bottom: 8px;
-            font-size: 14px;
+            margin-bottom: 10px;
+            font-size: 16px;
         }
         
         .owner-message .message-content {
             color: #333;
-            line-height: 1.4;
-            margin-bottom: 8px;
-            font-size: 15px;
+            line-height: 1.5;
+            margin-bottom: 10px;
+            font-size: 16px;
         }
         
         .owner-message .message-time {
-            font-size: 11px;
+            font-size: 12px;
             color: #666;
             text-align: left;
-        }
-
-        .owner-message .message-content a {
-            display: block;
-            padding: 12px;
-            margin: 8px 0;
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 8px;
-            text-decoration: none;
-            color: #075e54;
-            font-weight: 600;
-            min-height: 44px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
         }
 
         .welcome-message {
             text-align: center;
             color: #888;
-            font-size: 14px;
+            font-size: 16px;
             font-style: italic;
-            padding: 16px;
+            padding: 20px;
             background: rgba(255, 255, 255, 0.7);
             border-radius: 12px;
-            margin: 12px 0;
-            line-height: 1.4;
+            margin: 16px 0;
         }
         
         .owner-input-area {
             background: linear-gradient(135deg, #ffd700, #ffed4e);
-            padding: 12px;
+            padding: 16px;
             border-top: 3px solid #ffd700;
             display: none;
-            padding-bottom: max(12px, env(safe-area-inset-bottom));
         }
 
         .owner-input-area.show {
@@ -328,10 +230,10 @@
         .owner-input-container {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 12px;
             background: white;
             border-radius: 25px;
-            padding: 4px;
+            padding: 8px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
         
@@ -342,23 +244,19 @@
             font-size: 16px;
             outline: none;
             font-family: 'Inter', sans-serif;
-            background: transparent;
-            -webkit-appearance: none;
         }
         
         .owner-send-button, .file-upload-btn {
             border: none;
             border-radius: 50%;
-            width: 48px;
-            height: 48px;
+            width: 50px;
+            height: 50px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 18px;
             transition: all 0.2s ease;
-            min-width: 44px;
-            min-height: 44px;
         }
 
         .owner-send-button {
@@ -366,38 +264,21 @@
             color: white;
         }
 
-        .owner-send-button:active {
-            background: #064940;
-            transform: scale(0.95);
-        }
-
         .file-upload-btn {
             background: #6EC1E4;
             color: #1a1a1a;
-        }
-
-        .file-upload-btn:active {
-            background: #5BB1D1;
-            transform: scale(0.95);
-        }
-
-        .owner-send-button:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            transform: none;
         }
 
         .viewer-message {
             background: rgba(255, 255, 255, 0.9);
             border: 1px solid #ddd;
             border-radius: 12px;
-            padding: 16px;
+            padding: 20px;
             text-align: center;
             color: #666;
             font-style: italic;
-            margin: 12px;
-            font-size: 14px;
-            line-height: 1.4;
+            margin: 20px;
+            font-size: 16px;
         }
         
         .private-chat {
@@ -407,7 +288,6 @@
             left: 0;
             width: 100vw;
             height: 100vh;
-            height: 100dvh;
             background: white;
             z-index: 1000;
             flex-direction: column;
@@ -424,13 +304,6 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding-top: max(16px, env(safe-area-inset-top));
-            min-height: 60px;
-        }
-        
-        .private-header span {
-            font-size: 16px;
-            font-weight: 600;
         }
         
         .close-chat {
@@ -440,38 +313,25 @@
             font-size: 24px;
             cursor: pointer;
             padding: 8px;
-            min-width: 44px;
-            min-height: 44px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-        }
-        
-        .close-chat:active {
-            background: rgba(255, 255, 255, 0.1);
         }
         
         .private-messages {
             flex: 1;
-            padding: 16px 12px;
+            padding: 20px;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 16px;
             background: #e5ddd5;
-            -webkit-overflow-scrolling: touch;
-            min-height: 0;
         }
         
         .private-input-area {
             background: white;
-            padding: 12px;
+            padding: 16px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 12px;
             border-top: 1px solid #ddd;
-            padding-bottom: max(12px, env(safe-area-inset-bottom));
         }
         
         .private-input {
@@ -481,8 +341,6 @@
             padding: 12px 16px;
             font-size: 16px;
             outline: none;
-            font-family: 'Inter', sans-serif;
-            -webkit-appearance: none;
         }
         
         .private-send {
@@ -490,31 +348,22 @@
             color: white;
             border: none;
             border-radius: 50%;
-            width: 48px;
-            height: 48px;
+            width: 50px;
+            height: 50px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 18px;
-            min-width: 44px;
-            min-height: 44px;
-        }
-
-        .private-send:active {
-            background: #064940;
-            transform: scale(0.95);
         }
 
         .message {
-            max-width: 85%;
+            max-width: 70%;
             padding: 12px 16px;
             border-radius: 18px;
             word-wrap: break-word;
-            animation: fadeIn 0.3s ease-in;
-            font-size: 15px;
+            font-size: 16px;
             line-height: 1.4;
-            margin-bottom: 4px;
         }
         
         .message.received {
@@ -534,19 +383,12 @@
             font-weight: 600;
             color: #075e54;
             margin-bottom: 4px;
-            cursor: pointer;
         }
         
         .message-time {
-            font-size: 10px;
+            font-size: 11px;
             color: #999;
-            float: left;
             margin-top: 6px;
-            clear: both;
-        }
-        
-        .message.sent .message-time {
-            float: right;
         }
         
         .username-modal {
@@ -570,34 +412,30 @@
         .modal-content {
             background: linear-gradient(135deg, #0A1A3F 0%, #1e3c72 100%);
             border: 2px solid rgba(110, 193, 228, 0.3);
-            padding: 24px 20px;
+            padding: 30px;
             border-radius: 20px;
             text-align: center;
             width: 100%;
             max-width: 400px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.6);
-            max-height: 90vh;
-            overflow-y: auto;
         }
         
         .modal-content h2 {
-            margin-bottom: 12px;
+            margin-bottom: 16px;
             color: white;
             font-weight: 700;
-            font-size: 22px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            font-size: 24px;
         }
         
         .modal-content p {
-            margin-bottom: 20px;
+            margin-bottom: 24px;
             color: #6EC1E4;
-            font-size: 14px;
-            font-weight: 400;
+            font-size: 16px;
         }
         
         .modal-content input, .modal-content select {
             width: 100%;
-            padding: 16px 12px;
+            padding: 16px;
             border: 2px solid rgba(110, 193, 228, 0.5);
             border-radius: 12px;
             font-size: 16px;
@@ -607,8 +445,6 @@
             background: rgba(255, 255, 255, 0.15);
             color: white;
             backdrop-filter: blur(10px);
-            -webkit-appearance: none;
-            min-height: 48px;
         }
         
         .modal-content input::placeholder {
@@ -618,18 +454,11 @@
         .modal-content input:focus, .modal-content select:focus {
             outline: none;
             border-color: #6EC1E4;
-            background: rgba(255, 255, 255, 0.25);
             box-shadow: 0 0 0 3px rgba(110, 193, 228, 0.3);
-        }
-        
-        .modal-content select option {
-            background: #1e3c72;
-            color: white;
         }
         
         .photo-upload {
             margin-bottom: 20px;
-            text-align: center;
         }
         
         .photo-preview {
@@ -645,31 +474,17 @@
         .upload-btn {
             background: rgba(255, 255, 255, 0.15);
             border: 2px dashed #6EC1E4;
-            backdrop-filter: blur(10px);
-            padding: 20px 16px;
+            padding: 20px;
             border-radius: 12px;
             cursor: pointer;
             color: #6EC1E4;
             font-size: 14px;
-            font-weight: 500;
             transition: all 0.3s ease;
-            min-height: 60px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
         }
         
-        .upload-btn:active {
+        .upload-btn:hover {
             background: rgba(110, 193, 228, 0.2);
             color: white;
-            transform: scale(0.98);
-            border-color: white;
-        }
-        
-        .upload-btn small {
-            color: rgba(255, 255, 255, 0.8);
-            margin-top: 4px;
         }
         
         #photoInput, #fileInput {
@@ -687,102 +502,32 @@
             cursor: pointer;
             font-family: 'Inter', sans-serif;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 8px rgba(110, 193, 228, 0.3);
             width: 100%;
-            min-height: 48px;
         }
         
-        .modal-content button:active {
+        .modal-content button:hover {
             background: #5BB1D1;
-            transform: translateY(1px);
-            box-shadow: 0 2px 4px rgba(110, 193, 228, 0.3);
+            transform: translateY(-1px);
         }
         
-        @media (max-width: 768px) {
-            .users-online {
-                padding: 8px 12px;
-            }
-            
-            .users-grid {
-                gap: 8px;
-            }
-            
-            .user-card {
-                min-width: 70px;
-                padding: 8px 6px;
-            }
-            
-            .user-card-photo, .no-photo-placeholder {
-                width: 32px;
-                height: 32px;
-            }
-            
-            .user-card-name {
-                font-size: 11px;
-            }
-            
-            .user-card-status {
-                font-size: 9px;
-            }
-            
-            .owner-message {
-                padding: 12px;
-                margin: 8px 0;
-            }
-            
-            .owner-message .message-content {
-                font-size: 14px;
-            }
-            
-            .modal-content {
-                padding: 20px 16px;
-                border-radius: 16px;
-            }
-            
-            .modal-content h2 {
-                font-size: 20px;
-            }
-        }
-        
-        @media (max-width: 375px) {
-            .owner-input-container {
-                gap: 6px;
-            }
-            
-            .owner-send-button, .file-upload-btn {
-                width: 44px;
-                height: 44px;
-                font-size: 16px;
-            }
-            
-            .owner-message-input {
-                padding: 10px 12px;
-            }
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        @keyframes slideDown {
-            from { opacity: 0; transform: translate(-50%, -10px); }
-            to { opacity: 1; transform: translate(-50%, 0); }
-        }
-        
-        body {
-            position: fixed;
-            width: 100%;
-        }
-        
-        .lobby-messages, .private-messages, .users-online {
-            position: relative;
+        .kick-button {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            font-size: 12px;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
     <div class="loading" id="loading">
-        <div>📡 מתחבר לשרת...</div>
+        <div>מתחבר לשרת...</div>
     </div>
 
     <div class="username-modal" id="usernameModal">
@@ -792,15 +537,13 @@
             
             <div class="photo-upload">
                 <img id="photoPreview" class="photo-preview">
-                <div class="upload-btn" onclick="document.getElementById('photoInput').click()">
-                    📷 הוסף תמונת פרופיל
-                    <small>(אופציונלי)</small>
+                <div class="upload-btn" id="photoUploadBtn">
+                    📷 הוסף תמונת פרופיל (אופציונלי)
                 </div>
-                <input type="file" id="photoInput" accept="image/*" onchange="previewPhoto(this)">
+                <input type="file" id="photoInput" accept="image/*">
             </div>
             
             <input type="text" id="usernameInput" placeholder="השם שלך..." maxlength="20">
-            
             <input type="password" id="ownerPassword" placeholder="סיסמת OWNER (אופציונלי)">
             
             <select id="statusSelect">
@@ -810,12 +553,12 @@
                 <option value="מבולבל">מבולבל</option>
             </select>
             
-            <button onclick="joinChat()">הצטרף לצ'אט</button>
+            <button id="joinButton">הצטרף לצ'אט</button>
         </div>
     </div>
 
     <div class="header">
-        <div class="pub-name">🍺 פאב צ'אט <span style="font-size: 12px; opacity: 0.7;">v1.4.4</span></div>
+        <div class="pub-name">🍺 פאב צ'אט v1.4.4</div>
         <div class="online-count" id="onlineCount">מתחבר...</div>
     </div>
     
@@ -829,18 +572,16 @@
         <div class="lobby-messages" id="lobbyMessages">
             <div class="welcome-message">
                 🛍️ ברוכים הבאים ללובי הפאב!<br>
-                <small>כאן המנהל ישתף עדכונים והודעות חשובות</small>
+                כאן המנהל ישתף עדכונים והודעות חשובות
             </div>
         </div>
         
         <div class="owner-input-area" id="ownerInputArea">
             <div class="owner-input-container">
-                <button class="file-upload-btn" onclick="document.getElementById('fileInput').click()" title="העלה קובץ">
-                    📎
-                </button>
-                <input type="file" id="fileInput" accept="*/*" onchange="handleFileUpload(this)">
+                <button class="file-upload-btn" id="fileUploadBtn">📎</button>
+                <input type="file" id="fileInput" accept="*/*">
                 <input type="text" class="owner-message-input" placeholder="כתוב הודעה ללובי..." id="ownerMessageInput">
-                <button class="owner-send-button" onclick="sendLobbyMessage()" id="ownerSendButton" disabled>➤</button>
+                <button class="owner-send-button" id="ownerSendButton">➤</button>
             </div>
         </div>
         
@@ -853,13 +594,13 @@
         <div class="private-header">
             <div></div>
             <span id="privateChatName">צ'אט פרטי</span>
-            <button class="close-chat" onclick="closePrivateChat()">×</button>
+            <button class="close-chat" id="closeChatBtn">×</button>
         </div>
         <div class="private-messages" id="privateMessages">
         </div>
         <div class="private-input-area">
-            <input type="text" class="private-input" placeholder="הודעה פרטית..." id="privateInput" disabled>
-            <button class="private-send" onclick="sendPrivateMessage()" id="privateSendButton" disabled>➤</button>
+            <input type="text" class="private-input" placeholder="הודעה פרטית..." id="privateInput">
+            <button class="private-send" id="privateSendButton">➤</button>
         </div>
     </div>
 
@@ -893,23 +634,434 @@
         
         const OWNER_PASSWORD = "pub123";
 
+        // Initialize Firebase
         function initFirebase() {
             try {
                 app = firebase.initializeApp(firebaseConfig);
                 database = firebase.database();
                 storage = firebase.storage();
                 
-                console.log('Firebase initialized successfully');
-                
                 lobbyMessagesRef = database.ref('lobbyMessages');
                 usersRef = database.ref('users');
                 privateMessagesRef = database.ref('privateMessages');
                 blockedUsersRef = database.ref('blockedUsers');
                 
-                const connectedRef = database.ref('.info/connected');
-                connectedRef.on('value', (snapshot) => {
+                database.ref('.info/connected').on('value', (snapshot) => {
                     if (snapshot.val() === true) {
                         document.getElementById('loading').classList.add('hidden');
                         console.log('Connected to Firebase');
+                    }
+                });
+                
+                return true;
+            } catch (error) {
+                console.error('Firebase error:', error);
+                document.getElementById('loading').innerHTML = '<div>שגיאת חיבור לשרת</div>';
+                return false;
+            }
+        }
+
+        // Photo preview
+        function previewPhoto(file) {
+            const preview = document.getElementById('photoPreview');
+            const uploadBtn = document.getElementById('photoUploadBtn');
+            
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                    uploadBtn.innerHTML = '✅ תמונה נבחרה';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Upload photo
+        async function uploadPhoto(file) {
+            if (!file || !storage) return null;
+            
+            try {
+                const filename = `profile_${Date.now()}_${Math.random().toString(36).substring(7)}.jpg`;
+                const storageRef = storage.ref(`profile-photos/${filename}`);
+                const uploadTask = await storageRef.put(file);
+                return await uploadTask.ref.getDownloadURL();
+            } catch (error) {
+                console.error('Photo upload error:', error);
+                alert('שגיאה בהעלאת תמונה');
+                return null;
+            }
+        }
+
+        // Join chat function
+        async function joinChat() {
+            try {
+                const username = document.getElementById('usernameInput').value.trim();
+                const ownerPassword = document.getElementById('ownerPassword').value.trim();
+                const status = document.getElementById('statusSelect').value;
+                const photoFile = document.getElementById('photoInput').files[0];
+                
+                let finalUsername = username;
+                let isOwner = false;
+                
+                if (ownerPassword) {
+                    if (ownerPassword === OWNER_PASSWORD) {
+                        finalUsername = "OWNER";
+                        isOwner = true;
                     } else {
-                        console.log('Disconnected from Firebase');
+                        alert('סיסמת OWNER שגויה');
+                        return;
+                    }
+                } else if (!username) {
+                    alert('אנא הכנס שם משתמש');
+                    return;
+                }
+                
+                document.getElementById('loading').classList.remove('hidden');
+                
+                let photoURL = null;
+                if (photoFile) {
+                    photoURL = await uploadPhoto(photoFile);
+                }
+                
+                currentUser = {
+                    name: finalUsername,
+                    id: Date.now() + '_' + Math.floor(Math.random() * 10000),
+                    joinTime: Date.now(),
+                    photoURL: photoURL,
+                    status: status,
+                    isOwner: isOwner
+                };
+                
+                const userRef = usersRef.child(currentUser.id);
+                await userRef.set(currentUser);
+                userRef.onDisconnect().remove();
+                
+                document.getElementById('loading').classList.add('hidden');
+                document.getElementById('usernameModal').classList.add('hidden');
+                
+                setupUI();
+                setupListeners();
+                
+                const joinMessage = isOwner ? 
+                    `👑 המנהל ${finalUsername} הצטרף ללובי` : 
+                    `${finalUsername} הצטרף ללובי`;
+                    
+                addSystemMessage(joinMessage);
+                
+            } catch (error) {
+                console.error('Join error:', error);
+                document.getElementById('loading').classList.add('hidden');
+                alert('שגיאה בהצטרפות: ' + error.message);
+            }
+        }
+
+        // Setup UI
+        function setupUI() {
+            const ownerInputArea = document.getElementById('ownerInputArea');
+            const viewerMessage = document.getElementById('viewerMessage');
+            
+            if (currentUser && currentUser.isOwner) {
+                ownerInputArea.classList.add('show');
+                viewerMessage.style.display = 'none';
+            } else {
+                ownerInputArea.classList.remove('show');
+                viewerMessage.style.display = 'block';
+            }
+        }
+
+        // Send lobby message
+        function sendLobbyMessage() {
+            if (!currentUser || !currentUser.isOwner) return;
+            
+            const input = document.getElementById('ownerMessageInput');
+            const text = input.value.trim();
+            
+            if (!text) return;
+            
+            const message = {
+                id: Date.now() + '_' + Math.floor(Math.random() * 10000),
+                text: text,
+                sender: currentUser.name,
+                senderId: currentUser.id,
+                timestamp: Date.now(),
+                type: 'owner_message'
+            };
+            
+            lobbyMessagesRef.push(message);
+            input.value = '';
+        }
+
+        // Add system message
+        function addSystemMessage(text) {
+            const message = {
+                id: Date.now() + '_system',
+                text: text,
+                sender: 'System',
+                senderId: 'system',
+                timestamp: Date.now(),
+                type: 'system'
+            };
+            lobbyMessagesRef.push(message);
+        }
+
+        // Display lobby message
+        function displayLobbyMessage(message) {
+            const container = document.getElementById('lobbyMessages');
+            const messageDiv = document.createElement('div');
+            
+            if (message.type === 'owner_message') {
+                messageDiv.className = 'owner-message';
+                messageDiv.innerHTML = `
+                    <div class="message-header">👑 ${escapeHtml(message.sender)}</div>
+                    <div class="message-content">${escapeHtml(message.text)}</div>
+                    <div class="message-time">${formatTime(message.timestamp)}</div>
+                `;
+            } else if (message.type === 'system') {
+                messageDiv.className = 'welcome-message';
+                messageDiv.innerHTML = `📢 ${escapeHtml(message.text)}`;
+            }
+            
+            container.appendChild(messageDiv);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        // Setup listeners
+        function setupListeners() {
+            lobbyMessagesRef.on('child_added', (snapshot) => {
+                const message = snapshot.val();
+                displayLobbyMessage(message);
+            });
+            
+            usersRef.on('value', (snapshot) => {
+                const users = snapshot.val() || {};
+                updateUsersList(users);
+            });
+        }
+
+        // Update users list
+        function updateUsersList(users) {
+            const container = document.getElementById('usersOnline');
+            const userCount = Object.keys(users).length;
+            
+            document.getElementById('onlineCount').textContent = 
+                `${userCount} ${userCount === 1 ? 'אדם מחובר' : 'אנשים מחוברים'}`;
+            
+            const grid = document.createElement('div');
+            grid.className = 'users-grid';
+            
+            Object.values(users).forEach(user => {
+                const userCard = document.createElement('div');
+                userCard.className = `user-card ${user.id === currentUser?.id ? 'current-user' : ''}`;
+                
+                let photoHTML = '';
+                if (user.photoURL) {
+                    photoHTML = `<img src="${user.photoURL}" class="user-card-photo ${user.isOwner ? 'owner' : ''}" alt="פרופיל">`;
+                } else {
+                    const initial = user.name ? user.name.charAt(0).toUpperCase() : '?';
+                    photoHTML = `<div class="no-photo-placeholder ${user.isOwner ? 'owner' : ''}">${initial}</div>`;
+                }
+                
+                const statusHTML = user.status ? `<div class="user-card-status">${user.status}</div>` : '';
+                const ownerTag = user.isOwner ? ' 👑' : '';
+                
+                let kickButton = '';
+                if (currentUser && currentUser.isOwner && user.id !== currentUser.id && !user.isOwner) {
+                    kickButton = `<button class="kick-button" onclick="kickUser('${user.id}', '${escapeHtml(user.name)}')">×</button>`;
+                }
+                
+                userCard.innerHTML = `
+                    ${kickButton}
+                    ${photoHTML}
+                    <div class="user-card-name ${user.isOwner ? 'owner' : ''}">${escapeHtml(user.name || 'משתמש')}${ownerTag}</div>
+                    ${statusHTML}
+                `;
+                
+                if (user.id !== currentUser?.id) {
+                    userCard.addEventListener('click', (e) => {
+                        if (!e.target.classList.contains('kick-button')) {
+                            openPrivateChat(user.name || 'משתמש', user.id);
+                        }
+                    });
+                }
+                
+                grid.appendChild(userCard);
+            });
+            
+            container.innerHTML = '';
+            container.appendChild(grid);
+        }
+
+        // Kick user
+        function kickUser(userId, userName) {
+            if (!currentUser || !currentUser.isOwner || userId === currentUser.id) return;
+            
+            if (confirm(`האם אתה בטוח שברצונך להסיר את ${userName}?`)) {
+                usersRef.child(userId).remove();
+                addSystemMessage(`👑 המנהל הסיר את ${userName} מהפאב`);
+            }
+        }
+
+        // Open private chat
+        function openPrivateChat(userName, userId) {
+            if (userId === currentUser?.id) return;
+            
+            currentPrivateChat = { name: userName, id: userId };
+            
+            document.getElementById('privateChatName').textContent = `צ'אט פרטי עם ${userName}`;
+            document.getElementById('privateChat').classList.add('show');
+            
+            document.getElementById('privateMessages').innerHTML = `
+                <div style="text-align: center; color: #888; padding: 20px; font-size: 16px;">
+                    💬 התחלת צ'אט פרטי עם ${userName}
+                </div>
+            `;
+            
+            // Listen to private messages
+            const chatId = [currentUser.id, userId].sort().join('_');
+            const privateChatRef = privateMessagesRef.child(chatId);
+            
+            privateChatRef.on('child_added', (snapshot) => {
+                const message = snapshot.val();
+                displayPrivateMessage(message);
+            });
+        }
+
+        // Close private chat
+        function closePrivateChat() {
+            document.getElementById('privateChat').classList.remove('show');
+            currentPrivateChat = null;
+        }
+
+        // Send private message
+        function sendPrivateMessage() {
+            const input = document.getElementById('privateInput');
+            const text = input.value.trim();
+            
+            if (!text || !currentPrivateChat || !currentUser) return;
+            
+            const chatId = [currentUser.id, currentPrivateChat.id].sort().join('_');
+            const message = {
+                id: Date.now() + '_' + Math.floor(Math.random() * 10000),
+                text: text,
+                sender: currentUser.name,
+                senderId: currentUser.id,
+                recipient: currentPrivateChat.name,
+                recipientId: currentPrivateChat.id,
+                timestamp: Date.now(),
+                chatId: chatId
+            };
+            
+            privateMessagesRef.child(chatId).push(message);
+            input.value = '';
+        }
+
+        // Display private message
+        function displayPrivateMessage(message) {
+            const container = document.getElementById('privateMessages');
+            const messageDiv = document.createElement('div');
+            
+            const isOwn = message.senderId === currentUser?.id;
+            messageDiv.className = `message ${isOwn ? 'sent' : 'received'}`;
+            
+            let messageHTML = '';
+            if (!isOwn) {
+                messageHTML += `<div class="message-header">${escapeHtml(message.sender)}</div>`;
+            }
+            messageHTML += `<div>${escapeHtml(message.text)}</div>`;
+            messageHTML += `<div class="message-time">${formatTime(message.timestamp)}</div>`;
+            
+            messageDiv.innerHTML = messageHTML;
+            container.appendChild(messageDiv);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        // Utility functions
+        function formatTime(timestamp) {
+            const date = new Date(timestamp);
+            const hours = date.getHours().toString().padStart(2, '0');
+            const minutes = date.getMinutes().toString().padStart(2, '0');
+            return `${hours}:${minutes}`;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Event listeners setup
+        function setupEventListeners() {
+            // Join button
+            document.getElementById('joinButton').addEventListener('click', joinChat);
+            
+            // Photo upload
+            document.getElementById('photoUploadBtn').addEventListener('click', () => {
+                document.getElementById('photoInput').click();
+            });
+            
+            document.getElementById('photoInput').addEventListener('change', (e) => {
+                if (e.target.files[0]) {
+                    previewPhoto(e.target.files[0]);
+                }
+            });
+            
+            // Owner send button
+            document.getElementById('ownerSendButton').addEventListener('click', sendLobbyMessage);
+            
+            // Owner message input
+            document.getElementById('ownerMessageInput').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    sendLobbyMessage();
+                }
+            });
+            
+            // Username input
+            document.getElementById('usernameInput').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    joinChat();
+                }
+            });
+            
+            // Private chat controls
+            document.getElementById('closeChatBtn').addEventListener('click', closePrivateChat);
+            document.getElementById('privateSendButton').addEventListener('click', sendPrivateMessage);
+            
+            document.getElementById('privateInput').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    sendPrivateMessage();
+                }
+            });
+        }
+
+        // Initialize app
+        window.addEventListener('DOMContentLoaded', () => {
+            console.log('App starting...');
+            
+            if (initFirebase()) {
+                console.log('Firebase initialized successfully');
+                setupEventListeners();
+                console.log('Event listeners setup complete');
+            } else {
+                console.error('Firebase initialization failed');
+            }
+        });
+
+        // Cleanup on page close
+        window.addEventListener('beforeunload', () => {
+            if (currentUser && usersRef) {
+                usersRef.child(currentUser.id).remove();
+            }
+        });
+
+        // Make functions global for debugging
+        window.joinChat = joinChat;
+        window.sendLobbyMessage = sendLobbyMessage;
+        window.openPrivateChat = openPrivateChat;
+        window.closePrivateChat = closePrivateChat;
+        window.kickUser = kickUser;
+        
+        console.log('Script loaded successfully');
+    </script>
+</body>
+</html>
