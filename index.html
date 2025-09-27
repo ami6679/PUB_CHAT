@@ -999,21 +999,30 @@
         function blockUser(userId, userName) {
             if (!currentUser || userId === currentUser.id) return;
             
-            try {
-                blockedUsersRef.child(currentUser.id).child(userId).set(true);
-                blockedUsers.add(userId);
-                
-                // Update button in private chat if open
-                const buttonArea = document.querySelector('#privateMessages .block-button');
-                if (buttonArea) {
-                    buttonArea.outerHTML = `<button class="unblock-button" onclick="unblockUser('${userId}', '${userName}')">בטל חסימה</button>`;
+            // Check if trying to block OWNER
+            usersRef.child(userId).once('value', (snapshot) => {
+                const targetUser = snapshot.val();
+                if (targetUser && targetUser.isOwner) {
+                    alert('לא ניתן לחסום את המנהל');
+                    return;
                 }
                 
-                alert(`${userName} נחסם בהצלחה`);
-            } catch (error) {
-                console.error('Error blocking user:', error);
-                alert('שגיאה בחסימת המשתמש');
-            }
+                try {
+                    blockedUsersRef.child(currentUser.id).child(userId).set(true);
+                    blockedUsers.add(userId);
+                    
+                    // Update button in private chat if open
+                    const buttonArea = document.querySelector('#privateMessages .block-button');
+                    if (buttonArea) {
+                        buttonArea.outerHTML = `<button class="unblock-button" onclick="unblockUser('${userId}', '${userName}')">בטל חסימה</button>`;
+                    }
+                    
+                    alert(`${userName} נחסם בהצלחה`);
+                } catch (error) {
+                    console.error('Error blocking user:', error);
+                    alert('שגיאה בחסימת המשתמש');
+                }
+            });
         }
 
         // Unblock user
