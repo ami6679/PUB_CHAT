@@ -153,6 +153,23 @@
             font-style: italic;
         }
         
+        .online-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-left: 5px;
+        }
+        
+        .online-indicator.online {
+            background: #28a745;
+            box-shadow: 0 0 4px #28a745;
+        }
+        
+        .online-indicator.offline {
+            background: #6c757d;
+        }
+        
         .lobby-container {
             flex: 1;
             display: flex;
@@ -759,11 +776,22 @@
                     joinTime: Date.now(),
                     photoURL: photoURL,
                     status: status,
-                    isOwner: isOwner
+                    isOwner: isOwner,
+                    online: true
                 };
                 
                 const userRef = usersRef.child(currentUser.id);
                 await userRef.set(currentUser);
+                
+                // Set online status tracking
+                const connectedRef = database.ref('.info/connected');
+                connectedRef.on('value', (snap) => {
+                    if (snap.val() === true) {
+                        userRef.update({ online: true });
+                        userRef.onDisconnect().update({ online: false });
+                    }
+                });
+                
                 userRef.onDisconnect().remove();
                 
                 document.getElementById('loading').classList.add('hidden');
@@ -947,6 +975,10 @@
                 const ownerTag = user.isOwner ? ' 👑' : '';
                 const blockedHTML = isBlocked ? `<div style="color: #f44336; font-size: 10px; font-weight: 600;">🚫 חסום</div>` : '';
                 
+                // Online indicator
+                const onlineClass = user.online ? 'online' : 'offline';
+                const onlineHTML = `<span class="online-indicator ${onlineClass}" title="${user.online ? 'מחובר' : 'לא מחובר'}"></span>`;
+                
                 let kickButton = '';
                 if (currentUser && currentUser.isOwner && user.id !== currentUser.id && !user.isOwner) {
                     kickButton = `<button class="kick-button" data-user-id="${user.id}" data-user-name="${escapeHtml(user.name)}">×</button>`;
@@ -955,7 +987,7 @@
                 userCard.innerHTML = `
                     ${kickButton}
                     ${photoHTML}
-                    <div class="user-card-name ${user.isOwner ? 'owner' : ''}">${escapeHtml(user.name || 'משתמש')}${ownerTag}</div>
+                    <div class="user-card-name ${user.isOwner ? 'owner' : ''}">${escapeHtml(user.name || 'משתמש')}${ownerTag} ${onlineHTML}</div>
                     ${statusHTML}
                     ${blockedHTML}
                 `;
