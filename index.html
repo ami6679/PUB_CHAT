@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>פאב צ'אט v1.4.5</title>
+    <title>פאב צ'אט v1.4.6</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
@@ -347,6 +347,20 @@
             background: #e5ddd5;
         }
         
+        .typing-indicator {
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+            font-style: italic;
+            padding: 8px;
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+        
         .private-input-area {
             background: white;
             padding: 16px;
@@ -604,7 +618,7 @@
     </div>
 
     <div class="header">
-        <div class="pub-name">🍺 פאב צ'אט v1.4.5</div>
+        <div class="pub-name">🍺 פאב צ'אט v1.4.6</div>
         <div class="online-count" id="onlineCount">מתחבר...</div>
     </div>
     
@@ -675,8 +689,10 @@
         let usersRef = null;
         let privateMessagesRef = null;
         let blockedUsersRef = null;
+        let typingRef = null;
         let processedMessages = new Set();
         let blockedUsers = new Set();
+        let typingTimeout = null;
         
         const OWNER_PASSWORD = "pub123";
 
@@ -691,6 +707,7 @@
                 usersRef = database.ref('users');
                 privateMessagesRef = database.ref('privateMessages');
                 blockedUsersRef = database.ref('blockedUsers');
+                typingRef = database.ref('typing');
                 
                 database.ref('.info/connected').on('value', (snapshot) => {
                     if (snapshot.val() === true) {
@@ -896,413 +913,4 @@
                 updateUsersList(users);
             });
 
-            // Listen to private messages
-            privateMessagesRef.on('child_added', (snapshot) => {
-                const chatData = snapshot.val();
-                const chatId = snapshot.key;
-                
-                if (chatId && chatId.includes(currentUser.id)) {
-                    privateMessagesRef.child(chatId).on('child_added', (messageSnapshot) => {
-                        const message = messageSnapshot.val();
-                        
-                        if (message && message.recipientId === currentUser.id && message.senderId !== currentUser.id) {
-                            if (blockedUsers.has(message.senderId)) return;
-                            
-                            const messageKey = `${chatId}_${message.id}`;
-                            if (!processedMessages.has(messageKey)) {
-                                processedMessages.add(messageKey);
-                                
-                                if (!currentPrivateChat || currentPrivateChat.id !== message.senderId) {
-                                    showPrivateMessageNotification(message);
-                                }
-                            }
-                        }
-                    });
-                }
-            });
-        }
-
-        // Load blocked users
-        function loadBlockedUsers() {
-            if (!currentUser || !blockedUsersRef) return;
-            
-            try {
-                const userBlockedRef = blockedUsersRef.child(currentUser.id);
-                userBlockedRef.on('value', (snapshot) => {
-                    const blocked = snapshot.val() || {};
-                    blockedUsers.clear();
-                    Object.keys(blocked).forEach(blockedId => {
-                        blockedUsers.add(blockedId);
-                    });
-                    
-                    if (usersRef) {
-                        usersRef.once('value', (usersSnapshot) => {
-                            const users = usersSnapshot.val() || {};
-                            updateUsersList(users);
-                        });
-                    }
-                });
-            } catch (error) {
-                console.error('Error loading blocked users:', error);
-            }
-        }
-
-        // Update users list
-        function updateUsersList(users) {
-            const container = document.getElementById('usersOnline');
-            const userCount = Object.keys(users).length;
-            
-            document.getElementById('onlineCount').textContent = 
-                `${userCount} ${userCount === 1 ? 'אדם מחובר' : 'אנשים מחוברים'}`;
-            
-            const grid = document.createElement('div');
-            grid.className = 'users-grid';
-            
-            Object.values(users).forEach(user => {
-                const isBlocked = blockedUsers.has(user.id);
-                const userCard = document.createElement('div');
-                userCard.className = `user-card ${user.id === currentUser?.id ? 'current-user' : ''} ${isBlocked ? 'blocked' : ''}`;
-                
-                let photoHTML = '';
-                if (user.photoURL) {
-                    photoHTML = `<img src="${user.photoURL}" class="user-card-photo ${user.isOwner ? 'owner' : ''}" alt="פרופיל">`;
-                } else {
-                    const initial = user.name ? user.name.charAt(0).toUpperCase() : '?';
-                    photoHTML = `<div class="no-photo-placeholder ${user.isOwner ? 'owner' : ''}">${initial}</div>`;
-                }
-                
-                const statusHTML = user.status ? `<div class="user-card-status">${user.status}</div>` : '';
-                const ownerTag = user.isOwner ? ' 👑' : '';
-                const blockedHTML = isBlocked ? `<div style="color: #f44336; font-size: 10px; font-weight: 600;">🚫 חסום</div>` : '';
-                
-                // Online indicator
-                const onlineClass = user.online ? 'online' : 'offline';
-                const onlineHTML = `<span class="online-indicator ${onlineClass}" title="${user.online ? 'מחובר' : 'לא מחובר'}"></span>`;
-                
-                let kickButton = '';
-                if (currentUser && currentUser.isOwner && user.id !== currentUser.id && !user.isOwner) {
-                    kickButton = `<button class="kick-button" data-user-id="${user.id}" data-user-name="${escapeHtml(user.name)}">×</button>`;
-                }
-                
-                userCard.innerHTML = `
-                    ${kickButton}
-                    ${photoHTML}
-                    <div class="user-card-name ${user.isOwner ? 'owner' : ''}">${escapeHtml(user.name || 'משתמש')}${ownerTag} ${onlineHTML}</div>
-                    ${statusHTML}
-                    ${blockedHTML}
-                `;
-                
-                // Add click listener for private chat
-                if (user.id !== currentUser?.id) {
-                    userCard.addEventListener('click', (e) => {
-                        if (!e.target.classList.contains('kick-button')) {
-                            openPrivateChat(user.name || 'משתמש', user.id);
-                        }
-                    });
-                }
-                
-                // Add kick button listener
-                const kickBtn = userCard.querySelector('.kick-button');
-                if (kickBtn) {
-                    kickBtn.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        kickUser(kickBtn.dataset.userId, kickBtn.dataset.userName);
-                    });
-                }
-                
-                grid.appendChild(userCard);
-            });
-            
-            container.innerHTML = '';
-            container.appendChild(grid);
-        }
-
-        // Kick user
-        function kickUser(userId, userName) {
-            if (!currentUser || !currentUser.isOwner || userId === currentUser.id) return;
-            
-            if (confirm(`האם אתה בטוח שברצונך להסיר את ${userName}?`)) {
-                usersRef.child(userId).remove();
-                addSystemMessage(`👑 המנהל הסיר את ${userName} מהפאב`);
-            }
-        }
-
-        // Block user
-        function blockUser(userId, userName) {
-            if (!currentUser || userId === currentUser.id) return;
-            
-            // Check if trying to block OWNER
-            usersRef.child(userId).once('value', (snapshot) => {
-                const targetUser = snapshot.val();
-                if (targetUser && targetUser.isOwner) {
-                    alert('לא ניתן לחסום את המנהל');
-                    return;
-                }
-                
-                try {
-                    blockedUsersRef.child(currentUser.id).child(userId).set(true);
-                    blockedUsers.add(userId);
-                    
-                    // Update button in private chat if open
-                    const buttonArea = document.querySelector('#privateMessages .block-button');
-                    if (buttonArea) {
-                        buttonArea.outerHTML = `<button class="unblock-button" onclick="unblockUser('${userId}', '${userName}')">בטל חסימה</button>`;
-                    }
-                    
-                    alert(`${userName} נחסם בהצלחה`);
-                } catch (error) {
-                    console.error('Error blocking user:', error);
-                    alert('שגיאה בחסימת המשתמש');
-                }
-            });
-        }
-
-        // Unblock user
-        function unblockUser(userId, userName) {
-            if (!currentUser) return;
-            
-            try {
-                blockedUsersRef.child(currentUser.id).child(userId).remove();
-                blockedUsers.delete(userId);
-                
-                // Update button in private chat if open
-                const buttonArea = document.querySelector('#privateMessages .unblock-button');
-                if (buttonArea) {
-                    buttonArea.outerHTML = `<button class="block-button" onclick="blockUser('${userId}', '${userName}')">חסום משתמש</button>`;
-                }
-                
-                alert(`החסימה של ${userName} בוטלה`);
-            } catch (error) {
-                console.error('Error unblocking user:', error);
-                alert('שגיאה בביטול החסימה');
-            }
-        }
-
-        // Open private chat
-        function openPrivateChat(userName, userId) {
-            if (userId === currentUser?.id) return;
-            
-            currentPrivateChat = { name: userName, id: userId };
-            
-            document.getElementById('privateChatName').textContent = `צ'אט פרטי עם ${userName}`;
-            document.getElementById('privateChat').classList.add('show');
-            
-            const isBlocked = blockedUsers.has(userId);
-            const blockButtonHTML = isBlocked ? 
-                `<button class="unblock-button" onclick="unblockUser('${userId}', '${userName}')">בטל חסימה</button>` :
-                `<button class="block-button" onclick="blockUser('${userId}', '${userName}')">חסום משתמש</button>`;
-            
-            const welcomeMessage = isBlocked ? 
-                `<div style="text-align: center; color: #888; padding: 20px; font-size: 16px;">🚫 צ'אט פרטי עם ${userName} (חסום)</div>` :
-                `<div style="text-align: center; color: #888; padding: 20px; font-size: 16px;">💬 התחלת צ'אט פרטי עם ${userName}</div>`;
-            
-            document.getElementById('privateMessages').innerHTML = `
-                ${welcomeMessage}
-                <div style="text-align: center; padding: 16px; border-bottom: 1px solid #ddd; background: #f8f9fa;">
-                    ${blockButtonHTML}
-                </div>
-            `;
-            
-            // Listen to private messages for this chat
-            const chatId = [currentUser.id, userId].sort().join('_');
-            const privateChatRef = privateMessagesRef.child(chatId);
-            
-            privateChatRef.off();
-            privateChatRef.on('child_added', (snapshot) => {
-                const message = snapshot.val();
-                displayPrivateMessage(message);
-            });
-        }
-
-        // Close private chat
-        function closePrivateChat() {
-            document.getElementById('privateChat').classList.remove('show');
-            currentPrivateChat = null;
-        }
-
-        // Send private message
-        function sendPrivateMessage() {
-            const input = document.getElementById('privateInput');
-            const text = input.value.trim();
-            
-            if (!text || !currentPrivateChat || !currentUser) return;
-            
-            if (blockedUsers.has(currentPrivateChat.id)) {
-                alert('לא ניתן לשלוח הודעה למשתמש חסום');
-                return;
-            }
-            
-            // Check if current user is blocked by recipient
-            blockedUsersRef.child(currentPrivateChat.id).child(currentUser.id).once('value', (snapshot) => {
-                if (snapshot.exists()) {
-                    alert('לא ניתן לשלוח הודעה - המשתמש חסם אותך');
-                    return;
-                }
-                
-                const chatId = [currentUser.id, currentPrivateChat.id].sort().join('_');
-                const message = {
-                    id: Date.now() + '_' + Math.floor(Math.random() * 10000),
-                    text: text,
-                    sender: currentUser.name,
-                    senderId: currentUser.id,
-                    recipient: currentPrivateChat.name,
-                    recipientId: currentPrivateChat.id,
-                    timestamp: Date.now(),
-                    chatId: chatId
-                };
-                
-                privateMessagesRef.child(chatId).push(message);
-                input.value = '';
-            });
-        }
-
-        // Display private message
-        function displayPrivateMessage(message) {
-            if (blockedUsers.has(message.senderId)) return;
-            
-            const container = document.getElementById('privateMessages');
-            const messageDiv = document.createElement('div');
-            
-            const isOwn = message.senderId === currentUser?.id;
-            messageDiv.className = `message ${isOwn ? 'sent' : 'received'}`;
-            
-            let messageHTML = '';
-            if (!isOwn) {
-                messageHTML += `<div class="message-header">${escapeHtml(message.sender)}</div>`;
-            }
-            messageHTML += `<div>${escapeHtml(message.text)}</div>`;
-            messageHTML += `<div class="message-time">${formatTime(message.timestamp)}</div>`;
-            
-            messageDiv.innerHTML = messageHTML;
-            container.appendChild(messageDiv);
-            container.scrollTop = container.scrollHeight;
-        }
-
-        // Show private message notification
-        function showPrivateMessageNotification(message) {
-            if (blockedUsers.has(message.senderId)) return;
-            
-            const notificationDiv = document.createElement('div');
-            notificationDiv.style.cssText = `
-                position: fixed;
-                top: 70px;
-                left: 50%;
-                transform: translateX(-50%);
-                background: #ff4444;
-                color: white;
-                padding: 16px 20px;
-                border-radius: 12px;
-                z-index: 10000;
-                box-shadow: 0 4px 16px rgba(0,0,0,0.3);
-                font-size: 14px;
-                cursor: pointer;
-                max-width: 90%;
-                text-align: center;
-            `;
-            notificationDiv.innerHTML = `💬 ${message.sender}: ${escapeHtml(message.text.substring(0, 50))}${message.text.length > 50 ? '...' : ''}`;
-            
-            notificationDiv.onclick = () => {
-                openPrivateChat(message.sender, message.senderId);
-                document.body.removeChild(notificationDiv);
-            };
-            
-            document.body.appendChild(notificationDiv);
-            
-            setTimeout(() => {
-                if (document.body.contains(notificationDiv)) {
-                    document.body.removeChild(notificationDiv);
-                }
-            }, 5000);
-        }
-
-        // Utility functions
-        function formatTime(timestamp) {
-            const date = new Date(timestamp);
-            const hours = date.getHours().toString().padStart(2, '0');
-            const minutes = date.getMinutes().toString().padStart(2, '0');
-            return `${hours}:${minutes}`;
-        }
-
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-
-        // Event listeners setup
-        function setupEventListeners() {
-            // Join button
-            document.getElementById('joinButton').addEventListener('click', joinChat);
-            
-            // Photo upload
-            document.getElementById('photoUploadBtn').addEventListener('click', () => {
-                document.getElementById('photoInput').click();
-            });
-            
-            document.getElementById('photoInput').addEventListener('change', (e) => {
-                if (e.target.files[0]) {
-                    previewPhoto(e.target.files[0]);
-                }
-            });
-            
-            // Owner send button
-            document.getElementById('ownerSendButton').addEventListener('click', sendLobbyMessage);
-            
-            // Owner message input
-            document.getElementById('ownerMessageInput').addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    sendLobbyMessage();
-                }
-            });
-            
-            // Username input
-            document.getElementById('usernameInput').addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    joinChat();
-                }
-            });
-            
-            // Private chat controls
-            document.getElementById('closeChatBtn').addEventListener('click', closePrivateChat);
-            document.getElementById('privateSendButton').addEventListener('click', sendPrivateMessage);
-            
-            document.getElementById('privateInput').addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    sendPrivateMessage();
-                }
-            });
-        }
-
-        // Initialize app
-        window.addEventListener('DOMContentLoaded', () => {
-            console.log('App starting...');
-            
-            if (initFirebase()) {
-                console.log('Firebase initialized successfully');
-                setupEventListeners();
-                console.log('Event listeners setup complete');
-            } else {
-                console.error('Firebase initialization failed');
-            }
-        });
-
-        // Cleanup on page close
-        window.addEventListener('beforeunload', () => {
-            if (currentUser && usersRef) {
-                usersRef.child(currentUser.id).remove();
-            }
-        });
-
-        // Make functions global for debugging
-        window.joinChat = joinChat;
-        window.sendLobbyMessage = sendLobbyMessage;
-        window.openPrivateChat = openPrivateChat;
-        window.closePrivateChat = closePrivateChat;
-        window.kickUser = kickUser;
-        window.blockUser = blockUser;
-        window.unblockUser = unblockUser;
-        
-        console.log('Script loaded successfully - v1.4.5');
-    </script>
-</body>
-</html>
+            //
