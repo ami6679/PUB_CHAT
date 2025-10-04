@@ -1,175 +1,506 @@
-<!DOCTYPE html>
-<html lang="he" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>פאב צ'אט v1.4.6</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background: #0A1A3F; min-height: 100vh; display: flex; flex-direction: column; }
-        .loading { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 9999; color: white; font-size: 18px; }
-        .loading.hidden { display: none; }
-        .header { background: #075e54; color: white; padding: 16px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
-        .pub-name { font-size: 18px; font-weight: 600; margin-bottom: 4px; }
-        .online-count { font-size: 12px; opacity: 0.8; }
-        .users-online { background: rgba(7, 94, 84, 0.1); padding: 16px; text-align: center; color: #075e54; border-bottom: 1px solid #ddd; overflow-x: auto; }
-        .users-grid { display: inline-flex; gap: 16px; padding: 8px 0; }
-        .user-card { background: white; border: 1px solid #ddd; border-radius: 12px; padding: 16px; cursor: pointer; transition: all 0.2s; box-shadow: 0 2px 8px rgba(0,0,0,0.1); min-width: 100px; text-align: center; position: relative; }
-        .user-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
-        .user-card.current-user { background: #f0f0f0; cursor: default; }
-        .user-card.blocked { opacity: 0.5; filter: grayscale(1); }
-        .user-card-photo { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; margin: 0 auto 8px; border: 2px solid #075e54; }
-        .user-card-photo.owner { border: 3px solid #ffd700; box-shadow: 0 0 8px rgba(255, 215, 0, 0.4); }
-        .no-photo-placeholder { width: 50px; height: 50px; border-radius: 50%; background: #075e54; color: white; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px; font-size: 20px; font-weight: 600; }
-        .no-photo-placeholder.owner { background: #ffd700; color: #000; }
-        .user-card-name { font-weight: 600; margin-bottom: 4px; color: #075e54; font-size: 14px; }
-        .user-card-name.owner { color: #ffd700; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); }
-        .user-card-status { font-size: 12px; color: #666; font-style: italic; }
-        .online-indicator { width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-left: 5px; }
-        .online-indicator.online { background: #28a745; box-shadow: 0 0 4px #28a745; }
-        .online-indicator.offline { background: #6c757d; }
-        .lobby-container { flex: 1; display: flex; flex-direction: column; background: #e5ddd5; overflow: hidden; }
-        .lobby-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; }
-        .owner-message { background: linear-gradient(135deg, #ffd700, #ffed4e); border: 2px solid #ffd700; border-radius: 16px; padding: 20px; box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3); position: relative; }
-        .owner-message::before { content: "👑"; position: absolute; top: -10px; left: 15px; font-size: 20px; background: white; border-radius: 50%; padding: 5px; }
-        .owner-message .message-header { font-weight: 700; color: #8B4513; margin-bottom: 10px; font-size: 16px; }
-        .owner-message .message-content { color: #333; line-height: 1.5; margin-bottom: 10px; font-size: 16px; }
-        .owner-message .message-time { font-size: 12px; color: #666; text-align: left; }
-        .welcome-message { text-align: center; color: #888; font-size: 16px; font-style: italic; padding: 20px; background: rgba(255, 255, 255, 0.7); border-radius: 12px; margin: 16px 0; }
-        .owner-input-area { background: linear-gradient(135deg, #ffd700, #ffed4e); padding: 16px; border-top: 3px solid #ffd700; display: none; }
-        .owner-input-area.show { display: block; }
-        .owner-input-container { display: flex; align-items: center; gap: 12px; background: white; border-radius: 25px; padding: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-        .owner-message-input { flex: 1; border: none; padding: 12px 16px; font-size: 16px; outline: none; font-family: 'Inter', sans-serif; }
-        .owner-send-button, .file-upload-btn { border: none; border-radius: 50%; width: 50px; height: 50px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; transition: all 0.2s ease; }
-        .owner-send-button { background: #075e54; color: white; }
-        .file-upload-btn { background: #6EC1E4; color: #1a1a1a; }
-        .viewer-message { background: rgba(255, 255, 255, 0.9); border: 1px solid #ddd; border-radius: 12px; padding: 20px; text-align: center; color: #666; font-style: italic; margin: 20px; font-size: 16px; }
-        .private-chat { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: white; z-index: 1000; flex-direction: column; }
-        .private-chat.show { display: flex; }
-        .private-header { background: #075e54; color: white; padding: 16px; display: flex; justify-content: space-between; align-items: center; }
-        .close-chat { background: none; border: none; color: white; font-size: 24px; cursor: pointer; padding: 8px; }
-        .private-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; background: #e5ddd5; }
-        .typing-indicator { text-align: center; color: #666; font-size: 14px; font-style: italic; padding: 8px; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
-        .private-input-area { background: white; padding: 16px; display: flex; align-items: center; gap: 12px; border-top: 1px solid #ddd; }
-        .private-input { flex: 1; border: 1px solid #ddd; border-radius: 25px; padding: 12px 16px; font-size: 16px; outline: none; }
-        .private-send { background: #075e54; color: white; border: none; border-radius: 50%; width: 50px; height: 50px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; }
-        .message { max-width: 70%; padding: 12px 16px; border-radius: 18px; word-wrap: break-word; font-size: 16px; line-height: 1.4; }
-        .message.received { background: white; align-self: flex-start; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-        .message.sent { background: #dcf8c6; align-self: flex-end; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-        .message-header { font-size: 12px; font-weight: 600; color: #075e54; margin-bottom: 4px; }
-        .message-time { font-size: 11px; color: #999; margin-top: 6px; }
-        .username-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #0A1A3F 0%, #1e3c72 100%); display: flex; align-items: center; justify-content: center; z-index: 9999; padding: 20px; }
-        .username-modal.hidden { display: none; }
-        .modal-content { background: linear-gradient(135deg, #0A1A3F 0%, #1e3c72 100%); border: 2px solid rgba(110, 193, 228, 0.3); padding: 30px; border-radius: 20px; text-align: center; width: 100%; max-width: 400px; box-shadow: 0 20px 40px rgba(0,0,0,0.6); }
-        .modal-content h2 { margin-bottom: 16px; color: white; font-weight: 700; font-size: 24px; }
-        .modal-content p { margin-bottom: 24px; color: #6EC1E4; font-size: 16px; }
-        .modal-content input, .modal-content select { width: 100%; padding: 16px; border: 2px solid rgba(110, 193, 228, 0.5); border-radius: 12px; font-size: 16px; margin-bottom: 16px; text-align: center; font-family: 'Inter', sans-serif; background: rgba(255, 255, 255, 0.15); color: white; backdrop-filter: blur(10px); }
-        .modal-content input::placeholder { color: rgba(255, 255, 255, 0.7); }
-        .modal-content input:focus, .modal-content select:focus { outline: none; border-color: #6EC1E4; box-shadow: 0 0 0 3px rgba(110, 193, 228, 0.3); }
-        .photo-upload { margin-bottom: 20px; }
-        .photo-preview { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid #6EC1E4; margin-bottom: 12px; display: none; }
-        .upload-btn { background: rgba(255, 255, 255, 0.15); border: 2px dashed #6EC1E4; padding: 20px; border-radius: 12px; cursor: pointer; color: #6EC1E4; font-size: 14px; transition: all 0.3s ease; }
-        .upload-btn:hover { background: rgba(110, 193, 228, 0.2); color: white; }
-        #photoInput, #fileInput { display: none; }
-        .modal-content button { background: #6EC1E4; color: #1a1a1a; border: none; padding: 16px 32px; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.3s ease; width: 100%; }
-        .modal-content button:hover { background: #5BB1D1; transform: translateY(-1px); }
-        .kick-button { position: absolute; top: 5px; right: 5px; background: #dc3545; color: white; border: none; border-radius: 50%; width: 24px; height: 24px; font-size: 12px; cursor: pointer; }
-        .block-button { background: #dc3545; color: white; border: none; padding: 12px 20px; border-radius: 8px; font-size: 14px; margin: 8px; cursor: pointer; min-height: 44px; }
-        .unblock-button { background: #28a745; color: white; border: none; padding: 12px 20px; border-radius: 8px; font-size: 14px; margin: 8px; cursor: pointer; min-height: 44px; }
-    </style>
-</head>
-<body>
-    <div class="loading" id="loading"><div>מתחבר לשרת...</div></div>
-    <div class="username-modal" id="usernameModal">
-        <div class="modal-content">
-            <h2>🍺 ברוכים הבאים לפאב צ'אט!</h2>
-            <p>ספר לנו קצת על עצמך</p>
-            <div class="photo-upload">
-                <img id="photoPreview" class="photo-preview">
-                <div class="upload-btn" id="photoUploadBtn">📷 הוסף תמונת פרופיל (אופציונלי)</div>
-                <input type="file" id="photoInput" accept="image/*">
+import React, { useState, useEffect } from 'react';
+import { Calendar, Clock, User, Phone, CheckCircle, XCircle, Lock, LogOut, Home } from 'lucide-react';
+
+// Constants
+const BUSINESS_HOURS = {
+  start: 8,
+  end: 16,
+  workDays: [0, 1, 2, 3, 4] // Sunday to Thursday
+};
+
+const TREATMENT_TYPES = [
+  { id: 'manicure', name: 'מניקור', duration: 60 },
+  { id: 'pedicure', name: 'פדיקור', duration: 60 },
+  { id: 'gel', name: 'ג\'ל', duration: 60 }
+];
+
+const ADMIN_PASSWORD = 'admin123';
+
+export default function NailSalonApp() {
+  const [view, setView] = useState('home');
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [appointments, setAppointments] = useState([]);
+  const [blockedSlots, setBlockedSlots] = useState([]);
+  
+  const [clientForm, setClientForm] = useState({
+    name: '',
+    phone: '',
+    treatment: '',
+    date: '',
+    time: ''
+  });
+
+  const [password, setPassword] = useState('');
+  const [loginError, setLoginError] = useState('');
+
+  useEffect(() => {
+    const mockAppointments = [
+      {
+        id: '1',
+        name: 'שרה כהן',
+        phone: '050-1234567',
+        treatment: 'מניקור',
+        date: '2025-10-06',
+        time: '09:00',
+        status: 'pending'
+      },
+      {
+        id: '2',
+        name: 'רחל לוי',
+        phone: '052-9876543',
+        treatment: 'פדיקור',
+        date: '2025-10-06',
+        time: '11:00',
+        status: 'approved'
+      }
+    ];
+    setAppointments(mockAppointments);
+
+    const mockBlocked = [
+      { date: '2025-10-07', time: '14:00' },
+      { date: '2025-10-08', time: 'all-day' }
+    ];
+    setBlockedSlots(mockBlocked);
+  }, []);
+
+  const generateTimeSlots = (selectedDate) => {
+    const slots = [];
+    const date = new Date(selectedDate);
+    const dayOfWeek = date.getDay();
+
+    if (!BUSINESS_HOURS.workDays.includes(dayOfWeek)) {
+      return [];
+    }
+
+    const isDayBlocked = blockedSlots.some(
+      slot => slot.date === selectedDate && slot.time === 'all-day'
+    );
+    if (isDayBlocked) return [];
+
+    for (let hour = BUSINESS_HOURS.start; hour < BUSINESS_HOURS.end; hour++) {
+      const timeStr = `${hour.toString().padStart(2, '0')}:00`;
+      
+      const isBlocked = blockedSlots.some(
+        slot => slot.date === selectedDate && slot.time === timeStr
+      );
+      
+      const isBooked = appointments.some(
+        apt => apt.date === selectedDate && apt.time === timeStr && apt.status === 'approved'
+      );
+
+      if (!isBlocked && !isBooked) {
+        slots.push(timeStr);
+      }
+    }
+
+    return slots;
+  };
+
+  const handleAdminLogin = () => {
+    if (password === ADMIN_PASSWORD) {
+      setIsAdmin(true);
+      setView('admin');
+      setPassword('');
+      setLoginError('');
+    } else {
+      setLoginError('סיסמה שגויה');
+    }
+  };
+
+  const handleAdminLogout = () => {
+    setIsAdmin(false);
+    setView('home');
+  };
+
+  const handleClientSubmit = () => {
+    if (!clientForm.name || !clientForm.phone || !clientForm.treatment || !clientForm.date || !clientForm.time) {
+      alert('נא למלא את כל השדות');
+      return;
+    }
+
+    const newAppointment = {
+      id: Date.now().toString(),
+      ...clientForm,
+      status: 'pending',
+      createdAt: new Date().toISOString()
+    };
+
+    setAppointments([...appointments, newAppointment]);
+    
+    setClientForm({
+      name: '',
+      phone: '',
+      treatment: '',
+      date: '',
+      time: ''
+    });
+
+    alert('התור נשלח לאישור! בעלת העסק תאשר בקרוב.');
+    setView('home');
+  };
+
+  const approveAppointment = (id) => {
+    setAppointments(appointments.map(apt => 
+      apt.id === id ? { ...apt, status: 'approved' } : apt
+    ));
+  };
+
+  const rejectAppointment = (id) => {
+    setAppointments(appointments.filter(apt => apt.id !== id));
+  };
+
+  const getNextDays = (count = 14) => {
+    const days = [];
+    const today = new Date();
+    
+    for (let i = 0; i < count; i++) {
+      const date = new Date(today);
+      date.setDate(today.getDate() + i);
+      
+      const dayOfWeek = date.getDay();
+      if (BUSINESS_HOURS.workDays.includes(dayOfWeek)) {
+        days.push({
+          date: date.toISOString().split('T')[0],
+          display: date.toLocaleDateString('he-IL', { 
+            weekday: 'long', 
+            day: 'numeric', 
+            month: 'long' 
+          })
+        });
+      }
+    }
+    
+    return days;
+  };
+
+  // HOME VIEW
+  if (view === 'home') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-pink-50 to-purple-50 flex items-center justify-center p-4" dir="rtl">
+        <div className="max-w-md w-full bg-white rounded-2xl shadow-2xl p-8">
+          <div className="text-center mb-8">
+            <div className="w-20 h-20 bg-pink-500 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span className="text-4xl">💅</span>
             </div>
-            <input type="text" id="usernameInput" placeholder="השם שלך..." maxlength="20">
-            <input type="password" id="ownerPassword" placeholder="סיסמת OWNER (אופציונלי)">
-            <select id="statusSelect">
-                <option value="">בחר סטטוס (אופציונלי)</option>
-                <option value="פנוי">פנוי</option>
-                <option value="תפוס">תפוס</option>
-                <option value="מבולבל">מבולבל</option>
-            </select>
-            <button id="joinButton">הצטרף לצ'אט</button>
+            <h1 className="text-3xl font-bold text-gray-800 mb-2">סלון ציפורניים</h1>
+            <p className="text-gray-600">מערכת תורים מקוונת</p>
+          </div>
+
+          <div className="space-y-4">
+            <button
+              onClick={() => setView('client')}
+              className="w-full bg-pink-500 hover:bg-pink-600 text-white font-bold py-4 px-6 rounded-xl transition duration-200 flex items-center justify-center gap-3 shadow-lg"
+            >
+              <User size={24} />
+              <span className="text-lg">קביעת תור</span>
+            </button>
+
+            <button
+              onClick={() => setView('adminLogin')}
+              className="w-full bg-purple-500 hover:bg-purple-600 text-white font-bold py-4 px-6 rounded-xl transition duration-200 flex items-center justify-center gap-3 shadow-lg"
+            >
+              <Lock size={24} />
+              <span className="text-lg">כניסת בעלת עסק</span>
+            </button>
+          </div>
         </div>
-    </div>
-    <div class="header">
-        <div class="pub-name">🍺 פאב צ'אט v1.4.6</div>
-        <div class="online-count" id="onlineCount">מתחבר...</div>
-    </div>
-    <div class="users-online" id="usersOnline"><div class="users-grid"><div>מטען משתמשים...</div></div></div>
-    <div class="lobby-container">
-        <div class="lobby-messages" id="lobbyMessages">
-            <div class="welcome-message">🛍️ ברוכים הבאים ללובי הפאב!<br>כאן המנהל ישתף עדכונים והודעות חשובות</div>
-        </div>
-        <div class="owner-input-area" id="ownerInputArea">
-            <div class="owner-input-container">
-                <button class="file-upload-btn" id="fileUploadBtn">📎</button>
-                <input type="file" id="fileInput" accept="*/*">
-                <input type="text" class="owner-message-input" placeholder="כתוב הודעה ללובי..." id="ownerMessageInput">
-                <button class="owner-send-button" id="ownerSendButton">➤</button>
+      </div>
+    );
+  }
+
+  // ADMIN LOGIN VIEW
+  if (view === 'adminLogin') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50 flex items-center justify-center p-4" dir="rtl">
+        <div className="max-w-md w-full bg-white rounded-2xl shadow-2xl p-8">
+          <button
+            onClick={() => setView('home')}
+            className="mb-6 text-gray-600 hover:text-gray-800 flex items-center gap-2"
+          >
+            <Home size={20} />
+            <span>חזרה</span>
+          </button>
+
+          <div className="text-center mb-8">
+            <div className="w-20 h-20 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Lock size={32} className="text-white" />
             </div>
+            <h2 className="text-2xl font-bold text-gray-800">כניסת בעלת עסק</h2>
+          </div>
+
+          <div className="space-y-4">
+            <div>
+              <label className="block text-gray-700 font-medium mb-2">סיסמה</label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && handleAdminLogin()}
+                className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-purple-500 focus:outline-none"
+                placeholder="הזיני סיסמה"
+              />
+            </div>
+
+            {loginError && (
+              <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-xl">
+                {loginError}
+              </div>
+            )}
+
+            <button
+              onClick={handleAdminLogin}
+              className="w-full bg-purple-500 hover:bg-purple-600 text-white font-bold py-3 px-6 rounded-xl transition duration-200"
+            >
+              התחברות
+            </button>
+          </div>
         </div>
-        <div class="viewer-message" id="viewerMessage" style="display: none;">👀 אתה צופה בלובי - רק המנהל יכול לפרסם הודעות כאן</div>
-    </div>
-    <div class="private-chat" id="privateChat">
-        <div class="private-header">
-            <div></div>
-            <span id="privateChatName">צ'אט פרטי</span>
-            <button class="close-chat" id="closeChatBtn">×</button>
+      </div>
+    );
+  }
+
+  // CLIENT BOOKING VIEW
+  if (view === 'client') {
+    const availableDays = getNextDays();
+    const availableSlots = clientForm.date ? generateTimeSlots(clientForm.date) : [];
+
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-pink-50 to-purple-50 p-4" dir="rtl">
+        <div className="max-w-2xl mx-auto">
+          <div className="bg-white rounded-2xl shadow-2xl p-6 md:p-8">
+            <button
+              onClick={() => setView('home')}
+              className="mb-6 text-gray-600 hover:text-gray-800 flex items-center gap-2"
+            >
+              <Home size={20} />
+              <span>חזרה</span>
+            </button>
+
+            <div className="text-center mb-8">
+              <h2 className="text-3xl font-bold text-gray-800 mb-2">קביעת תור</h2>
+              <p className="text-gray-600">מלאי את הפרטים ובחרי מועד מתאים</p>
+            </div>
+
+            <div className="space-y-6">
+              {/* Name */}
+              <div>
+                <label className="block text-gray-700 font-medium mb-2 flex items-center gap-2">
+                  <User size={18} />
+                  שם מלא
+                </label>
+                <input
+                  type="text"
+                  value={clientForm.name}
+                  onChange={(e) => setClientForm({...clientForm, name: e.target.value})}
+                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-pink-500 focus:outline-none"
+                  placeholder="לדוגמה: שרה כהן"
+                />
+              </div>
+
+              {/* Phone */}
+              <div>
+                <label className="block text-gray-700 font-medium mb-2 flex items-center gap-2">
+                  <Phone size={18} />
+                  טלפון
+                </label>
+                <input
+                  type="tel"
+                  value={clientForm.phone}
+                  onChange={(e) => setClientForm({...clientForm, phone: e.target.value})}
+                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-pink-500 focus:outline-none"
+                  placeholder="050-1234567"
+                />
+              </div>
+
+              {/* Treatment Type */}
+              <div>
+                <label className="block text-gray-700 font-medium mb-2">סוג טיפול</label>
+                <div className="grid grid-cols-3 gap-3">
+                  {TREATMENT_TYPES.map(treatment => (
+                    <button
+                      key={treatment.id}
+                      type="button"
+                      onClick={() => setClientForm({...clientForm, treatment: treatment.name})}
+                      className={`py-3 px-4 rounded-xl font-medium transition duration-200 ${
+                        clientForm.treatment === treatment.name
+                          ? 'bg-pink-500 text-white shadow-lg'
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      }`}
+                    >
+                      {treatment.name}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Date Selection */}
+              <div>
+                <label className="block text-gray-700 font-medium mb-2 flex items-center gap-2">
+                  <Calendar size={18} />
+                  תאריך
+                </label>
+                <select
+                  value={clientForm.date}
+                  onChange={(e) => setClientForm({...clientForm, date: e.target.value, time: ''})}
+                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-pink-500 focus:outline-none"
+                >
+                  <option value="">בחרי תאריך</option>
+                  {availableDays.map(day => (
+                    <option key={day.date} value={day.date}>
+                      {day.display}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Time Selection */}
+              {clientForm.date && (
+                <div>
+                  <label className="block text-gray-700 font-medium mb-2 flex items-center gap-2">
+                    <Clock size={18} />
+                    שעה
+                  </label>
+                  {availableSlots.length > 0 ? (
+                    <div className="grid grid-cols-4 gap-3">
+                      {availableSlots.map(slot => (
+                        <button
+                          key={slot}
+                          type="button"
+                          onClick={() => setClientForm({...clientForm, time: slot})}
+                          className={`py-3 px-4 rounded-xl font-medium transition duration-200 ${
+                            clientForm.time === slot
+                              ? 'bg-pink-500 text-white shadow-lg'
+                              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                          }`}
+                        >
+                          {slot}
+                        </button>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded-xl">
+                      אין שעות פנויות בתאריך זה
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Submit */}
+              <button
+                onClick={handleClientSubmit}
+                disabled={!clientForm.name || !clientForm.phone || !clientForm.treatment || !clientForm.date || !clientForm.time}
+                className="w-full bg-pink-500 hover:bg-pink-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-bold py-4 px-6 rounded-xl transition duration-200 shadow-lg"
+              >
+                שליחת בקשה לתור
+              </button>
+            </div>
+          </div>
         </div>
-        <div class="private-messages" id="privateMessages"></div>
-        <div class="private-input-area">
-            <input type="text" class="private-input" placeholder="הודעה פרטית..." id="privateInput">
-            <button class="private-send" id="privateSendButton">➤</button>
+      </div>
+    );
+  }
+
+  // ADMIN VIEW
+  if (view === 'admin' && isAdmin) {
+    const pendingAppointments = appointments.filter(apt => apt.status === 'pending');
+    const approvedAppointments = appointments.filter(apt => apt.status === 'approved');
+
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50 p-4" dir="rtl">
+        <div className="max-w-6xl mx-auto">
+          <div className="bg-white rounded-2xl shadow-2xl p-6 md:p-8">
+            {/* Header */}
+            <div className="flex justify-between items-center mb-8">
+              <h2 className="text-3xl font-bold text-gray-800">ניהול תורים</h2>
+              <button
+                onClick={handleAdminLogout}
+                className="flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-xl transition duration-200"
+              >
+                <LogOut size={18} />
+                התנתקות
+              </button>
+            </div>
+
+            {/* Pending Appointments */}
+            <div className="mb-8">
+              <h3 className="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                <Clock size={24} className="text-orange-500" />
+                תורים ממתינים לאישור ({pendingAppointments.length})
+              </h3>
+              
+              {pendingAppointments.length === 0 ? (
+                <div className="bg-gray-100 rounded-xl p-6 text-center text-gray-600">
+                  אין תורים ממתינים
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {pendingAppointments.map(apt => (
+                    <div key={apt.id} className="bg-orange-50 border-2 border-orange-200 rounded-xl p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                      <div className="flex-1">
+                        <div className="font-bold text-lg text-gray-800">{apt.name}</div>
+                        <div className="text-gray-600 flex items-center gap-4 mt-1 flex-wrap">
+                          <span>📱 {apt.phone}</span>
+                          <span>💅 {apt.treatment}</span>
+                        </div>
+                        <div className="text-gray-700 font-medium mt-2">
+                          📅 {new Date(apt.date).toLocaleDateString('he-IL')} | ⏰ {apt.time}
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => approveAppointment(apt.id)}
+                          className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-xl flex items-center gap-2 transition duration-200"
+                        >
+                          <CheckCircle size={18} />
+                          אישור
+                        </button>
+                        <button
+                          onClick={() => rejectAppointment(apt.id)}
+                          className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-xl flex items-center gap-2 transition duration-200"
+                        >
+                          <XCircle size={18} />
+                          דחייה
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Approved Appointments */}
+            <div>
+              <h3 className="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                <CheckCircle size={24} className="text-green-500" />
+                תורים מאושרים ({approvedAppointments.length})
+              </h3>
+              
+              {approvedAppointments.length === 0 ? (
+                <div className="bg-gray-100 rounded-xl p-6 text-center text-gray-600">
+                  אין תורים מאושרים
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {approvedAppointments.map(apt => (
+                    <div key={apt.id} className="bg-green-50 border-2 border-green-200 rounded-xl p-4">
+                      <div className="font-bold text-lg text-gray-800">{apt.name}</div>
+                      <div className="text-gray-600 flex items-center gap-4 mt-1 flex-wrap">
+                        <span>📱 {apt.phone}</span>
+                        <span>💅 {apt.treatment}</span>
+                      </div>
+                      <div className="text-gray-700 font-medium mt-2">
+                        📅 {new Date(apt.date).toLocaleDateString('he-IL')} | ⏰ {apt.time}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
         </div>
-    </div>
-    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-storage-compat.js"></script>
-    <script>
-const firebaseConfig={apiKey:"AIzaSyD0STbryzKWhnCzeDoyoLnvvQNjeHTurSg",authDomain:"pubav6679.firebaseapp.com",databaseURL:"https://pubav6679-default-rtdb.firebaseio.com",projectId:"pubav6679",storageBucket:"pubav6679.firebasestorage.app",messagingSenderId:"623522233176",appId:"1:623522233176:web:2e1741879cd880cfa6032d"};
-let app,database,storage,currentUser=null,currentPrivateChat=null,lobbyMessagesRef,usersRef,privateMessagesRef,blockedUsersRef,typingRef,processedMessages=new Set(),blockedUsers=new Set(),typingTimeout=null;
-const OWNER_PASSWORD="pub123";
-function initFirebase(){try{app=firebase.initializeApp(firebaseConfig);database=firebase.database();storage=firebase.storage();lobbyMessagesRef=database.ref('lobbyMessages');usersRef=database.ref('users');privateMessagesRef=database.ref('privateMessages');blockedUsersRef=database.ref('blockedUsers');typingRef=database.ref('typing');database.ref('.info/connected').on('value',s=>{if(s.val()===true){document.getElementById('loading').classList.add('hidden');console.log('Connected')}});return true}catch(e){console.error('Firebase error:',e);document.getElementById('loading').innerHTML='<div>שגיאה</div>';return false}}
-function previewPhoto(file){const preview=document.getElementById('photoPreview'),uploadBtn=document.getElementById('photoUploadBtn');if(file){const reader=new FileReader();reader.onload=e=>{preview.src=e.target.result;preview.style.display='block';uploadBtn.innerHTML='✅ תמונה נבחרה'};reader.readAsDataURL(file)}}
-async function uploadPhoto(file){if(!file||!storage)return null;try{const filename=`profile_${Date.now()}_${Math.random().toString(36).substring(7)}.jpg`,storageRef=storage.ref(`profile-photos/${filename}`),uploadTask=await storageRef.put(file);return await uploadTask.ref.getDownloadURL()}catch(e){console.error('Photo error:',e);alert('שגיאה בהעלאת תמונה');return null}}
-async function joinChat(){try{const username=document.getElementById('usernameInput').value.trim(),ownerPassword=document.getElementById('ownerPassword').value.trim(),status=document.getElementById('statusSelect').value,photoFile=document.getElementById('photoInput').files[0];let finalUsername=username,isOwner=false;if(ownerPassword){if(ownerPassword===OWNER_PASSWORD){finalUsername="OWNER";isOwner=true}else{alert('סיסמת OWNER שגויה');return}}else if(!username){alert('אנא הכנס שם משתמש');return}document.getElementById('loading').classList.remove('hidden');let photoURL=null;if(photoFile){photoURL=await uploadPhoto(photoFile)}currentUser={name:finalUsername,id:Date.now()+'_'+Math.floor(Math.random()*10000),joinTime:Date.now(),photoURL,status,isOwner,online:true};const userRef=usersRef.child(currentUser.id);await userRef.set(currentUser);database.ref('.info/connected').on('value',snap=>{if(snap.val()===true){userRef.update({online:true});userRef.onDisconnect().update({online:false})}});userRef.onDisconnect().remove();document.getElementById('loading').classList.add('hidden');document.getElementById('usernameModal').classList.add('hidden');setupUI();setupListeners();loadBlockedUsers();addSystemMessage(isOwner?`👑 המנהל ${finalUsername} הצטרף ללובי`:`${finalUsername} הצטרף ללובי`)}catch(e){console.error('Join error:',e);document.getElementById('loading').classList.add('hidden');alert('שגיאה: '+e.message)}}
-function setupUI(){const ownerInputArea=document.getElementById('ownerInputArea'),viewerMessage=document.getElementById('viewerMessage');if(currentUser&&currentUser.isOwner){ownerInputArea.classList.add('show');viewerMessage.style.display='none'}else{ownerInputArea.classList.remove('show');viewerMessage.style.display='block'}}
-function sendLobbyMessage(){if(!currentUser||!currentUser.isOwner)return;const input=document.getElementById('ownerMessageInput'),text=input.value.trim();if(!text)return;lobbyMessagesRef.push({id:Date.now()+'_'+Math.floor(Math.random()*10000),text,sender:currentUser.name,senderId:currentUser.id,timestamp:Date.now(),type:'owner_message'});input.value=''}
-function addSystemMessage(text){lobbyMessagesRef.push({id:Date.now()+'_system',text,sender:'System',senderId:'system',timestamp:Date.now(),type:'system'})}
-function displayLobbyMessage(msg){const container=document.getElementById('lobbyMessages'),messageDiv=document.createElement('div');if(msg.type==='owner_message'){messageDiv.className='owner-message';messageDiv.innerHTML=`<div class="message-header">👑 ${escapeHtml(msg.sender)}</div><div class="message-content">${escapeHtml(msg.text)}</div><div class="message-time">${formatTime(msg.timestamp)}</div>`}else if(msg.type==='system'){messageDiv.className='welcome-message';messageDiv.innerHTML=`📢 ${escapeHtml(msg.text)}`}container.appendChild(messageDiv);container.scrollTop=container.scrollHeight}
-function setupListeners(){lobbyMessagesRef.on('child_added',s=>displayLobbyMessage(s.val()));usersRef.on('value',s=>updateUsersList(s.val()||{}));privateMessagesRef.on('child_added',s=>{const chatData=s.val(),chatId=s.key;if(chatId&&chatId.includes(currentUser.id)){privateMessagesRef.child(chatId).on('child_added',ms=>{const msg=ms.val();if(msg&&msg.recipientId===currentUser.id&&msg.senderId!==currentUser.id){if(blockedUsers.has(msg.senderId))return;const key=`${chatId}_${msg.id}`;if(!processedMessages.has(key)){processedMessages.add(key);if(!currentPrivateChat||currentPrivateChat.id!==msg.senderId){showPrivateMessageNotification(msg)}}}})}})
+      </div>
+    );
+  }
+
+  return null;
 }
-function loadBlockedUsers(){if(!currentUser||!blockedUsersRef)return;try{blockedUsersRef.child(currentUser.id).on('value',s=>{const blocked=s.val()||{};blockedUsers.clear();Object.keys(blocked).forEach(id=>blockedUsers.add(id));if(usersRef){usersRef.once('value',us=>updateUsersList(us.val()||{}))}})}catch(e){console.error('Error loading blocked:',e)}}
-function updateUsersList(users){const container=document.getElementById('usersOnline'),userCount=Object.keys(users).length;document.getElementById('onlineCount').textContent=`${userCount} ${userCount===1?'אדם מחובר':'אנשים מחוברים'}`;const grid=document.createElement('div');grid.className='users-grid';Object.values(users).forEach(user=>{const isBlocked=blockedUsers.has(user.id),userCard=document.createElement('div');userCard.className=`user-card ${user.id===currentUser?.id?'current-user':''} ${isBlocked?'blocked':''}`;let photoHTML='';if(user.photoURL){photoHTML=`<img src="${user.photoURL}" class="user-card-photo ${user.isOwner?'owner':''}" alt="פרופיל">`}else{const initial=user.name?user.name.charAt(0).toUpperCase():'?';photoHTML=`<div class="no-photo-placeholder ${user.isOwner?'owner':''}">${initial}</div>`}const statusHTML=user.status?`<div class="user-card-status">${user.status}</div>`:'',ownerTag=user.isOwner?' 👑':'',blockedHTML=isBlocked?`<div style="color: #f44336; font-size: 10px; font-weight: 600;">🚫 חסום</div>`:'',onlineClass=user.online?'online':'offline',onlineHTML=`<span class="online-indicator ${onlineClass}" title="${user.online?'מחובר':'לא מחובר'}"></span>`;let kickButton='';if(currentUser&&currentUser.isOwner&&user.id!==currentUser.id&&!user.isOwner){kickButton=`<button class="kick-button" data-user-id="${user.id}" data-user-name="${escapeHtml(user.name)}">×</button>`}userCard.innerHTML=`${kickButton}${photoHTML}<div class="user-card-name ${user.isOwner?'owner':''}">${escapeHtml(user.name||'משתמש')}${ownerTag} ${onlineHTML}</div>${statusHTML}${blockedHTML}`;if(user.id!==currentUser?.id){userCard.addEventListener('click',e=>{if(!e.target.classList.contains('kick-button')){openPrivateChat(user.name||'משתמש',user.id)}})}const kickBtn=userCard.querySelector('.kick-button');if(kickBtn){kickBtn.addEventListener('click',e=>{e.stopPropagation();kickUser(kickBtn.dataset.userId,kickBtn.dataset.userName)})}grid.appendChild(userCard)});container.innerHTML='';container.appendChild(grid)}
-function kickUser(userId,userName){if(!currentUser||!currentUser.isOwner||userId===currentUser.id)return;if(confirm(`האם אתה בטוח שברצונך להסיר את ${userName}?`)){usersRef.child(userId).remove();addSystemMessage(`👑 המנהל הסיר את ${userName} מהפאב`)}}
-function blockUser(userId,userName){if(!currentUser||userId===currentUser.id)return;usersRef.child(userId).once('value',s=>{const targetUser=s.val();if(targetUser&&targetUser.isOwner){alert('לא ניתן לחסום את המנהל');return}try{blockedUsersRef.child(currentUser.id).child(userId).set(true);blockedUsers.add(userId);const buttonArea=document.querySelector('#privateMessages .block-button');if(buttonArea){buttonArea.outerHTML=`<button class="unblock-button" onclick="unblockUser('${userId}', '${userName}')">בטל חסימה</button>`}alert(`${userName} נחסם בהצלחה`)}catch(e){console.error('Error blocking:',e);alert('שגיאה בחסימה')}})}
-function unblockUser(userId,userName){if(!currentUser)return;try{blockedUsersRef.child(currentUser.id).child(userId).remove();blockedUsers.delete(userId);const buttonArea=document.querySelector('#privateMessages .unblock-button');if(buttonArea){buttonArea.outerHTML=`<button class="block-button" onclick="blockUser('${userId}', '${userName}')">חסום משתמש</button>`}alert(`החסימה של ${userName} בוטלה`)}catch(e){console.error('Error unblocking:',e);alert('שגיאה')}}
-function setTyping(chatId,isTyping){if(!currentUser||!typingRef)return;const typingPath=typingRef.child(chatId).child(currentUser.id);if(isTyping){typingPath.set({name:currentUser.name,timestamp:Date.now()});typingPath.onDisconnect().remove()}else{typingPath.remove()}}
-function listenToTyping(chatId,otherUserId){if(!typingRef)return;typingRef.child(chatId).child(otherUserId).on('value',s=>{const typingData=s.val(),typingIndicator=document.getElementById('typingIndicator');if(typingData&&typingData.name){if(!typingIndicator){const indicator=document.createElement('div');indicator.id='typingIndicator';indicator.className='typing-indicator';indicator.textContent=`${typingData.name} מקליד...`;document.getElementById('privateMessages').appendChild(indicator)}}else{if(typingIndicator){typingIndicator.remove()}}})}
-function handlePrivateTyping(){if(!currentPrivateChat||!currentUser)return;const chatId=[currentUser.id,currentPrivateChat.id].sort().join('_');setTyping(chatId,true);if(typingTimeout)clearTimeout(typingTimeout);typingTimeout=setTimeout(()=>setTyping(chatId,false),3000)}
-function openPrivateChat(userName,userId){if(userId===currentUser?.id)return;currentPrivateChat={name:userName,id:userId};document.getElementById('privateChatName').textContent=`צ'אט פרטי עם ${userName}`;document.getElementById('privateChat').classList.add('show');const isBlocked=blockedUsers.has(userId),blockButtonHTML=isBlocked?`<button class="unblock-button" onclick="unblockUser('${userId}', '${userName}')">בטל חסימה</button>`:`<button class="block-button" onclick="blockUser('${userId}', '${userName}')">חסום משתמש</button>`,welcomeMessage=isBlocked?`<div style="text-align: center; color: #888; padding: 20px; font-size: 16px;">🚫 צ'אט פרטי עם ${userName} (חסום)</div>`:`<div style="text-align: center; color: #888; padding: 20px; font-size: 16px;">💬 התחלת צ'אט פרטי עם ${userName}</div>`;document.getElementById('privateMessages').innerHTML=`${welcomeMessage}<div style="text-align: center; padding: 16px; border-bottom: 1px solid #ddd; background: #f8f9fa;">${blockButtonHTML}</div>`;const chatId=[currentUser.id,userId].sort().join('_'),privateChatRef=privateMessagesRef.child(chatId);privateChatRef.off();privateChatRef.on('child_added',s=>displayPrivateMessage(s.val()));listenToTyping(chatId,userId)}
-function closePrivateChat(){if(currentPrivateChat){const chatId=[currentUser.id,currentPrivateChat.id].sort().join('_');setTyping(chatId,false)}document.getElementById('privateChat').classList.remove('show');currentPrivateChat=null}
-function sendPrivateMessage(){const input=document.getElementById('privateInput'),text=input.value.trim();if(!text||!currentPrivateChat||!currentUser)return;if(blockedUsers.has(currentPrivateChat.id)){alert('לא ניתן לשלוח הודעה למשתמש חסום');return}const chatId=[currentUser.id,currentPrivateChat.id].sort().join('_');setTyping(chatId,false);blockedUsersRef.child(currentPrivateChat.id).child(currentUser.id).once('value',s=>{if(s.exists()){alert('לא ניתן לשלוח הודעה - המשתמש חסם אותך');return}privateMessagesRef.child(chatId).push({id:Date.now()+'_'+Math.floor(Math.random()*10000),text,sender:currentUser.name,senderId:currentUser.id,recipient:currentPrivateChat.name,recipientId:currentPrivateChat.id,timestamp:Date.now(),chatId});input.value=''})}
-function displayPrivateMessage(msg){if(blockedUsers.has(msg.senderId))return;const container=document.getElementById('privateMessages'),messageDiv=document.createElement('div'),isOwn=msg.senderId===currentUser?.id;messageDiv.className=`message ${isOwn?'sent':'received'}`;let messageHTML='';if(!isOwn){messageHTML+=`<div class="message-header">${escapeHtml(msg.sender)}</div>`}messageHTML+=`<div>${escapeHtml(msg.text)}</div><div class="message-time">${formatTime(msg.timestamp)}</div>`;messageDiv.innerHTML=messageHTML;container.appendChild(messageDiv);container.scrollTop=container.scrollHeight}
-function showPrivateMessageNotification(msg){if(blockedUsers.has(msg.senderId))return;const notificationDiv=document.createElement('div');notificationDiv.style.cssText='position: fixed;top: 70px;left: 50%;transform: translateX(-50%);background: #ff4444;color: white;padding: 16px 20px;border-radius: 12px;z-index: 10000;box-shadow: 0 4px 16px rgba(0,0,0,0.3);font-size: 14px;cursor: pointer;max-width: 90%;text-align: center;';notificationDiv.innerHTML=`💬 ${msg.sender}: ${escapeHtml(msg.text.substring(0,50))}${msg.text.length>50?'...':''}`;notificationDiv.onclick=()=>{openPrivateChat(msg.sender,msg.senderId);document.body.removeChild(notificationDiv)};document.body.appendChild(notificationDiv);setTimeout(()=>{if(document.body.contains(notificationDiv)){document.body.removeChild(notificationDiv)}},5000)}
-function formatTime(timestamp){const date=new Date(timestamp),hours=date.getHours().toString().padStart(2,'0'),minutes=date.getMinutes().toString().padStart(2,'0');return`${hours}:${minutes}`}
-function escapeHtml(text){const div=document.createElement('div');div.textContent=text;return div.innerHTML}
-function setupEventListeners(){document.getElementById('joinButton').addEventListener('click',joinChat);document.getElementById('photoUploadBtn').addEventListener('click',()=>document.getElementById('photoInput').click());document.getElementById('photoInput').addEventListener('change',e=>{if(e.target.files[0]){previewPhoto(e.target.files[0])}});document.getElementById('ownerSendButton').addEventListener('click',sendLobbyMessage);document.getElementById('ownerMessageInput').addEventListener('keypress',e=>{if(e.key==='Enter'){sendLobbyMessage()}});document.getElementById('usernameInput').addEventListener('keypress',e=>{if(e.key==='Enter'){joinChat()}});document.getElementById('closeChatBtn').addEventListener('click',closePrivateChat);document.getElementById('privateSendButton').addEventListener('click',sendPrivateMessage);document.getElementById('privateInput').addEventListener('input',handlePrivateTyping);document.getElementById('privateInput').addEventListener('keypress',e=>{if(e.key==='Enter'){sendPrivateMessage()}})}
-window.addEventListener('DOMContentLoaded',()=>{console.log('App starting...');if(initFirebase()){console.log('Firebase initialized successfully');setupEventListeners();console.log('Event listeners setup complete')}else{console.error('Firebase initialization failed')}});
-window.addEventListener('beforeunload',()=>{if(currentUser&&usersRef){usersRef.child(currentUser.id).remove()}if(currentPrivateChat){const chatId=[currentUser.id,currentPrivateChat.id].sort().join('_');setTyping(chatId,false)}});
-window.joinChat=joinChat;window.sendLobbyMessage=sendLobbyMessage;window.openPrivateChat=openPrivateChat;window.closePrivateChat=closePrivateChat;window.kickUser=kickUser;window.blockUser=blockUser;window.unblockUser=unblockUser;
-console.log('Script loaded successfully - v1.4.6');
-    </script>
-</body>
-</html>
